@@ -29,11 +29,11 @@ const SECS2InterpreterApp = () => {
 						<div>
 							<h1 className="text-3xl font-bold text-white flex items-center gap-3">
 								<FileText className="w-8 h-8" />
-								SECS/GEM Analysis Suite
+								SECS/GEM Log Parser
 							</h1>
 							<p className="text-blue-100 mt-2">
 								Complete toolkit for SECS-II message interpretation and
-								log analysis
+								log file analysis
 							</p>
 						</div>
 						<img
