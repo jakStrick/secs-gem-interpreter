@@ -49,7 +49,7 @@ const SECS2InterpreterApp = () => {
 							</p>
 						</div>
 						<img
-							src="/logo.png"
+							src="/logo.svg"
 							alt="SECS/GEM Icon"
 							className="w-20 h-20 md:w-40 md:h-40 mr-10"
 						/>

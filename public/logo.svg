@@ -1,16 +1,17 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 200 200"
+  xmlns="http://www.w3.org/2000/svg">
   <!-- Background Circle -->
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
     </linearGradient>
-    
+
     <linearGradient id="waferGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
     </linearGradient>
-    
+
     <filter id="glow">
       <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
       <feMerge>
@@ -18,15 +19,20 @@
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+
+    <!-- Clip path for magnifying glass lens -->
+    <clipPath id="lensClip">
+      <circle cx="0" cy="0" r="15"/>
+    </clipPath>
   </defs>
-  
+
   <!-- Background -->
   <circle cx="100" cy="100" r="95" fill="url(#bgGradient)"/>
-  
+
   <!-- Wafer Circle (representing semiconductor) -->
   <circle cx="100" cy="100" r="50" fill="url(#waferGradient)" opacity="0.3"/>
   <circle cx="100" cy="100" r="45" fill="none" stroke="#60a5fa" stroke-width="2"/>
-  
+
   <!-- Grid pattern on wafer (representing chips) -->
   <line x1="100" y1="55" x2="100" y2="145" stroke="#3b82f6" stroke-width="1" opacity="0.4"/>
   <line x1="55" y1="100" x2="145" y2="100" stroke="#3b82f6" stroke-width="1" opacity="0.4"/>
@@ -34,46 +40,80 @@
   <line x1="125" y1="60" x2="125" y2="140" stroke="#3b82f6" stroke-width="0.5" opacity="0.3"/>
   <line x1="60" y1="75" x2="140" y2="75" stroke="#3b82f6" stroke-width="0.5" opacity="0.3"/>
   <line x1="60" y1="125" x2="140" y2="125" stroke="#3b82f6" stroke-width="0.5" opacity="0.3"/>
-  
+
   <!-- Binary/Hex code streams (representing data) -->
   <g opacity="0.8" filter="url(#glow)">
     <!-- Top left data stream -->
     <text x="35" y="40" font-family="monospace" font-size="8" fill="#a5f3fc" font-weight="bold">S1F2</text>
     <text x="25" y="50" font-family="monospace" font-size="6" fill="#67e8f9">0x41</text>
-    
+
     <!-- Top right data stream -->
     <text x="150" y="35" font-family="monospace" font-size="8" fill="#a5f3fc" font-weight="bold">S6F11</text>
     <text x="155" y="45" font-family="monospace" font-size="6" fill="#67e8f9">0xA5</text>
-    
+
     <!-- Bottom left data stream -->
     <text x="30" y="165" font-family="monospace" font-size="8" fill="#a5f3fc" font-weight="bold">S2F41</text>
     <text x="25" y="175" font-family="monospace" font-size="6" fill="#67e8f9">0x21</text>
-    
+
     <!-- Bottom right data stream -->
     <text x="150" y="170" font-family="monospace" font-size="8" fill="#a5f3fc" font-weight="bold">S5F1</text>
     <text x="155" y="180" font-family="monospace" font-size="6" fill="#67e8f9">0x01</text>
   </g>
-  
+
   <!-- Signal waves (representing communication) -->
   <g opacity="0.6">
     <path d="M 30 100 Q 40 90, 50 100 T 70 100" stroke="#86efac" stroke-width="2" fill="none"/>
     <path d="M 130 100 Q 140 110, 150 100 T 170 100" stroke="#86efac" stroke-width="2" fill="none"/>
   </g>
-  
-  <!-- Magnifying glass (representing analysis) -->
-  <g transform="translate(135, 135)">
-    <circle cx="0" cy="0" r="18" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0.9"/>
-    <circle cx="0" cy="0" r="12" fill="rgba(251, 191, 36, 0.1)"/>
-    <line x1="13" y1="13" x2="25" y2="25" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
-    
-    <!-- Binary inside magnifier -->
-    <text x="-8" y="5" font-family="monospace" font-size="10" fill="#fbbf24" font-weight="bold">01</text>
+
+  <!-- Magnifying glass (representing analysis) - rotates around circle -->
+  <g>
+    <!-- Rotation animation around the center point (100, 100) with radius 70 -->
+    <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 100 100" to="360 100 100" dur="8s" repeatCount="indefinite"/>
+
+    <g transform="translate(100, 30)">
+      <!-- Magnifying glass lens with glass effect -->
+      <circle cx="0" cy="0" r="18" fill="rgba(251, 191, 36, 0.15)" stroke="#fbbf24" stroke-width="3" opacity="0.9"/>
+
+      <!-- Binary digits scrolling inside the lens -->
+      <g clip-path="url(#lensClip)">
+        <!-- First column of binary -->
+        <g opacity="0.9">
+          <text x="-10" y="-5" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="-10" y="5" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="-10" y="15" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="-10" y="25" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
+          <animate attributeName="y" values="-5;-25" dur="1.5s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- Second column of binary -->
+        <g opacity="0.8">
+          <text x="0" y="-8" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">0</text>
+          <text x="0" y="2" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="0" y="12" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="0" y="22" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">0</text>
+          <animate attributeName="y" values="-8;-28" dur="1.8s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- Third column of binary -->
+        <g opacity="0.9">
+          <text x="7" y="-3" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="7" y="7" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="7" y="17" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="7" y="27" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">0</text>
+          <animate attributeName="y" values="-3;-23" dur="2.1s" repeatCount="indefinite"/>
+        </g>
+      </g>
+
+      <!-- Magnifying glass handle -->
+      <line x1="13" y1="13" x2="25" y2="25" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+    </g>
   </g>
-  
+
   <!-- Center SECS text -->
   <text x="100" y="105" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">SECS</text>
   <text x="100" y="120" font-family="Arial, sans-serif" font-size="10" fill="#e0f2fe" text-anchor="middle">GEM</text>
-  
+
   <!-- Decorative corner brackets -->
   <g stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.5">
     <!-- Top left -->
