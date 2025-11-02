@@ -23,14 +23,23 @@ const SECS2InterpreterApp = () => {
 			<div className="max-w-7xl mx-auto">
 				{/* Header */}
 				<div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg p-6 shadow-2xl">
-					<h1 className="text-3xl font-bold text-white flex items-center gap-3">
-						<FileText className="w-8 h-8" />
-						SECS/GEM Analysis Suite
-					</h1>
-					<p className="text-blue-100 mt-2">
-						Complete toolkit for SECS-II message interpretation and log
-						analysis
-					</p>
+					<div className="flex items-center justify-between">
+						<div>
+							<h1 className="text-3xl font-bold text-white flex items-center gap-3">
+								<FileText className="w-8 h-8" />
+								SECS/GEM Analysis Suite
+							</h1>
+							<p className="text-blue-100 mt-2">
+								Complete toolkit for SECS-II message interpretation and
+								log analysis
+							</p>
+						</div>
+						<img
+							src="/logo.png"
+							alt="SECS/GEM Icon"
+							className="w-20 h-20 md:w-40 md:h-40 mr-10"
+						/>
+					</div>
 				</div>
 
 				{/* Tab Navigation */}
