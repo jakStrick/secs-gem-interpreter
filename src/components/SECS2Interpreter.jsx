@@ -426,7 +426,7 @@ const ParserTab = () => {
 	const [displayLimit, setDisplayLimit] = useState(100);
 	const abortControllerRef = React.useRef(null);
 
-	const MESSAGE_INFO = messages;
+	const MESSAGE_INFO = messages.MESSAGE_INFO;
 
 	const parseLogFile = (content) => {
 		const lines = content.split("\n");
