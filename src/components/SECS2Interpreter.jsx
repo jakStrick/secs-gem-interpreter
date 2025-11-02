@@ -1181,6 +1181,38 @@ const InterpreterTab = () => {
 			hex: "21 01 00",
 			struct: "VRFYACK: <Binary>",
 		},
+		S16F7: {
+			name: "Get Substrate History Request",
+			dir: "H→E",
+			reply: "S16F8",
+			desc: "Request substrate processing history",
+			hex: "A5 04 00 00 00 01",
+			struct: "MID: <U4>",
+		},
+		S16F8: {
+			name: "Get Substrate History Data",
+			dir: "E→H",
+			reply: "None",
+			desc: "Substrate history data",
+			hex: "01 03 A5 04 00 00 00 01 41 10 48 49 53 54 4F 52 59 5F 44 41 54 41 41 14 32 30 32 35 2D 30 31 2D 31 35 20 31 34 3A 33 30 3A 30 30",
+			struct: "<List[3]> MID, History",
+		},
+		S16F9: {
+			name: "Set Substrate Location Request",
+			dir: "H→E",
+			reply: "S16F10",
+			desc: "Set substrate location",
+			hex: "01 02 A5 04 00 00 00 01 41 08 4C 4F 43 41 54 49 4F 4E",
+			struct: "<List[2]> MID, LOCATION",
+		},
+		S16F10: {
+			name: "Set Substrate Location Ack",
+			dir: "E→H",
+			reply: "None",
+			desc: "Ack substrate location set",
+			hex: "21 01 00",
+			struct: "ACKC16: <Binary>",
+		},
 		S16F11: {
 			name: "Get Material Data Request",
 			dir: "H→E",
@@ -1196,6 +1228,70 @@ const InterpreterTab = () => {
 			desc: "Material data response",
 			hex: "01 05 A5 04 00 00 00 01 41 05 54 59 50 45 41 41 04 4C 4F 54 41 41 08 51 55 41 4E 54 49 54 59 41 05 4F 57 4E 45 52 41 06 53 54 41 54 55 53 41",
 			struct: "<List[5]> MID, Material Attributes",
+		},
+		S16F13: {
+			name: "Get Substrate Destination Request",
+			dir: "H→E",
+			reply: "S16F14",
+			desc: "Request substrate destination",
+			hex: "A5 04 00 00 00 01",
+			struct: "MID: <U4>",
+		},
+		S16F14: {
+			name: "Get Substrate Destination Data",
+			dir: "E→H",
+			reply: "None",
+			desc: "Substrate destination data",
+			hex: "01 02 A5 04 00 00 00 01 41 0C 44 45 53 54 49 4E 41 54 49 4F 4E",
+			struct: "<List[2]> MID, DEST",
+		},
+		S16F15: {
+			name: "Material Received Notification",
+			dir: "E→H",
+			reply: "S16F16",
+			desc: "Notify material received at location",
+			hex: "01 02 A5 04 00 00 00 01 41 08 4C 4F 43 41 54 49 4F 4E",
+			struct: "<List[2]> MID, LOCATION",
+		},
+		S16F16: {
+			name: "Material Received Acknowledge",
+			dir: "H→E",
+			reply: "None",
+			desc: "Acknowledge material received notification",
+			hex: "21 01 00",
+			struct: "ACKC16: <Binary>",
+		},
+		S16F17: {
+			name: "Material Removed Notification",
+			dir: "E→H",
+			reply: "S16F18",
+			desc: "Notify material removed from location",
+			hex: "01 02 A5 04 00 00 00 01 41 08 4C 4F 43 41 54 49 4F 4E",
+			struct: "<List[2]> MID, LOCATION",
+		},
+		S16F18: {
+			name: "Material Removed Acknowledge",
+			dir: "H→E",
+			reply: "None",
+			desc: "Acknowledge material removed notification",
+			hex: "21 01 00",
+			struct: "ACKC16: <Binary>",
+		},
+		S16F19: {
+			name: "Get Processing State Request",
+			dir: "H→E",
+			reply: "S16F20",
+			desc: "Request material processing state",
+			hex: "A5 04 00 00 00 01",
+			struct: "MID: <U4>",
+		},
+		S16F20: {
+			name: "Get Processing State Data",
+			dir: "E→H",
+			reply: "None",
+			desc: "Material processing state",
+			hex: "01 02 A5 04 00 00 00 01 41 0A 50 52 4F 43 45 53 53 49 4E 47",
+			struct: "<List[2]> MID, STATE",
 		},
 
 		// S17 - Clock
@@ -1724,6 +1820,26 @@ const ParserTab = () => {
 			dir: "H→E",
 			desc: "Acknowledge terminal request",
 		},
+		S16F1: {
+			name: "Material ID Read Request",
+			dir: "E→H",
+			desc: "Request material ID read",
+		},
+		S16F2: {
+			name: "Material ID Read Ack",
+			dir: "H→E",
+			desc: "Acknowledge material ID read",
+		},
+		S16F15: {
+			name: "Material Received Notification",
+			dir: "E→H",
+			desc: "Notify material received at location",
+		},
+		S16F16: {
+			name: "Material Received Ack",
+			dir: "H→E",
+			desc: "Acknowledge material received",
+		},
 	};
 
 	const parseLogFile = (content) => {
@@ -2170,8 +2286,10 @@ const ParserTab = () => {
 												</div>
 											</div>
 											{pair.response.data && (
-												<div className="text-xs text-slate-300 font-mono mt-2 bg-slate-900 p-2 rounded truncate">
-													{pair.response.data}
+												<div className="text-xs text-slate-300 font-mono mt-2 bg-slate-900 p-2 rounded overflow-x-auto max-w-full">
+													<div className="whitespace-nowrap">
+														{pair.response.data}
+													</div>
 												</div>
 											)}
 											<div className="text-xs text-slate-400 mt-2">
