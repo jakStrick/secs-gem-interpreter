@@ -20,6 +20,26 @@
 			"dir": "E→H",
 			"desc": "Status variable values"
 		},
+		"S1F5": {
+			"name": "Formatted Status Request",
+			"dir": "H→E",
+			"desc": "Request formatted status"
+		},
+		"S1F6": {
+			"name": "Formatted Status Data",
+			"dir": "E→H",
+			"desc": "Formatted status data"
+		},
+		"S1F11": {
+			"name": "Status Variable Namelist Request",
+			"dir": "H→E",
+			"desc": "Request status variable names"
+		},
+		"S1F12": {
+			"name": "Status Variable Namelist Reply",
+			"dir": "E→H",
+			"desc": "Status variable name list"
+		},
 		"S1F13": {
 			"name": "Establish Comms Request",
 			"dir": "H→E",
@@ -30,30 +50,130 @@
 			"dir": "E→H",
 			"desc": "Acknowledge comms establishment"
 		},
+		"S1F15": {
+			"name": "Request Offline",
+			"dir": "H→E",
+			"desc": "Request equipment go offline"
+		},
+		"S1F16": {
+			"name": "Offline Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge offline request"
+		},
+		"S1F17": {
+			"name": "Request Online",
+			"dir": "H→E",
+			"desc": "Request equipment go online"
+		},
+		"S1F18": {
+			"name": "Online Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge online request"
+		},
+		"S1F19": {
+			"name": "Get Attribute Request",
+			"dir": "H→E",
+			"desc": "Request equipment attributes"
+		},
+		"S1F20": {
+			"name": "Get Attribute Data",
+			"dir": "E→H",
+			"desc": "Equipment attribute data"
+		},
+		"S1F21": {
+			"name": "Data Variable Namelist Request",
+			"dir": "H→E",
+			"desc": "Request data variable names"
+		},
+		"S1F22": {
+			"name": "Data Variable Namelist Reply",
+			"dir": "E→H",
+			"desc": "Data variable name list"
+		},
+		"S1F23": {
+			"name": "Collection Event Namelist Request",
+			"dir": "H→E",
+			"desc": "Request collection event names"
+		},
+		"S1F24": {
+			"name": "Collection Event Namelist Reply",
+			"dir": "E→H",
+			"desc": "Collection event names"
+		},
 		"S2F13": {
 			"name": "Equipment Constant Request",
 			"dir": "H→E",
-			"desc": "Request constants"
+			"desc": "Request equipment constant values"
 		},
 		"S2F14": {
 			"name": "Equipment Constant Data",
 			"dir": "E→H",
-			"desc": "Constant values"
+			"desc": "Equipment constant values"
+		},
+		"S2F15": {
+			"name": "New Equipment Constant Send",
+			"dir": "H→E",
+			"desc": "Set new equipment constant values"
+		},
+		"S2F16": {
+			"name": "New Equipment Constant Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge constant change"
 		},
 		"S2F17": {
 			"name": "Date/Time Request",
 			"dir": "H→E",
-			"desc": "Request current time"
+			"desc": "Request current equipment date/time"
 		},
 		"S2F18": {
 			"name": "Date/Time Data",
 			"dir": "E→H",
-			"desc": "Current date and time"
+			"desc": "Equipment current date/time"
+		},
+		"S2F23": {
+			"name": "Trace Initialize Send",
+			"dir": "H→E",
+			"desc": "Initialize trace data collection"
+		},
+		"S2F24": {
+			"name": "Trace Initialize Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge trace initialization"
+		},
+		"S2F25": {
+			"name": "Loopback Diagnostic Request",
+			"dir": "H→E",
+			"desc": "Test communication loopback"
+		},
+		"S2F26": {
+			"name": "Loopback Diagnostic Data",
+			"dir": "E→H",
+			"desc": "Loopback response"
+		},
+		"S2F27": {
+			"name": "Initiate Processing Request",
+			"dir": "H→E",
+			"desc": "Request to initiate processing"
+		},
+		"S2F28": {
+			"name": "Initiate Processing Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge processing initiation"
+		},
+		"S2F29": {
+			"name": "Equipment Constant Namelist Request",
+			"dir": "H→E",
+			"desc": "Request equipment constant names"
+		},
+		"S2F30": {
+			"name": "Equipment Constant Namelist",
+			"dir": "E→H",
+			"desc": "Equipment constant name list"
 		},
 		"S2F31": {
-			"name": "Date/Time Set",
+			"name": "Date/Time Set Request",
 			"dir": "H→E",
-			"desc": "Set equipment time"
+			"desc": "Set equipment date and time"
 		},
 		"S2F32": {
 			"name": "Date/Time Set Ack",
@@ -63,7 +183,7 @@
 		"S2F33": {
 			"name": "Define Report",
 			"dir": "H→E",
-			"desc": "Define report structure"
+			"desc": "Define which variables in reports"
 		},
 		"S2F34": {
 			"name": "Define Report Ack",
@@ -73,102 +193,457 @@
 		"S2F35": {
 			"name": "Link Event Report",
 			"dir": "H→E",
-			"desc": "Link events to reports"
+			"desc": "Link collection events to reports"
 		},
 		"S2F36": {
 			"name": "Link Event Report Ack",
 			"dir": "E→H",
-			"desc": "Acknowledge event link"
+			"desc": "Acknowledge event/report link"
 		},
 		"S2F37": {
-			"name": "Enable/Disable Events",
+			"name": "Enable/Disable Event Report",
 			"dir": "H→E",
-			"desc": "Enable or disable events"
+			"desc": "Enable/disable event reports"
 		},
 		"S2F38": {
-			"name": "Enable/Disable Events Ack",
+			"name": "Enable/Disable Event Report Ack",
 			"dir": "E→H",
-			"desc": "Acknowledge event enable/disable"
+			"desc": "Acknowledge enable/disable"
+		},
+		"S2F39": {
+			"name": "Multi-Block Inquire",
+			"dir": "H→E",
+			"desc": "Inquire about multi-block grant"
+		},
+		"S2F40": {
+			"name": "Multi-Block Grant",
+			"dir": "E→H",
+			"desc": "Grant multi-block transfer"
 		},
 		"S2F41": {
-			"name": "Host Command",
+			"name": "Host Command Send",
 			"dir": "H→E",
-			"desc": "Host sending command to equipment"
+			"desc": "Send remote command to equipment"
 		},
 		"S2F42": {
-			"name": "Command Ack",
+			"name": "Host Command Ack",
 			"dir": "E→H",
-			"desc": "Equipment acknowledges command"
+			"desc": "Acknowledge command"
+		},
+		"S2F43": {
+			"name": "Reset Spooling Streams and Functions",
+			"dir": "H→E",
+			"desc": "Reset spooling configuration"
+		},
+		"S2F44": {
+			"name": "Reset Spooling Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge spooling reset"
+		},
+		"S2F45": {
+			"name": "Define Variable Limit Attributes",
+			"dir": "H→E",
+			"desc": "Define variable limit attributes"
+		},
+		"S2F46": {
+			"name": "Variable Limit Attribute Acknowledge",
+			"dir": "E→H",
+			"desc": "Acknowledge limit definition"
+		},
+		"S2F47": {
+			"name": "Variable Limit Attribute Request",
+			"dir": "H→E",
+			"desc": "Request variable limit attributes"
+		},
+		"S2F48": {
+			"name": "Variable Limit Attribute Send",
+			"dir": "E→H",
+			"desc": "Send variable limit attributes"
+		},
+		"S2F49": {
+			"name": "Enhanced Remote Command",
+			"dir": "H→E",
+			"desc": "Enhanced command with object spec"
+		},
+		"S2F50": {
+			"name": "Enhanced Remote Command Acknowledge",
+			"dir": "E→H",
+			"desc": "Enhanced command ack"
+		},
+		"S3F1": {
+			"name": "Material Status Request",
+			"dir": "H→E",
+			"desc": "Request material status"
+		},
+		"S3F2": {
+			"name": "Material Status Data",
+			"dir": "E→H",
+			"desc": "Material status response"
+		},
+		"S3F15": {
+			"name": "Material Status Data Send",
+			"dir": "E→H",
+			"desc": "Unsolicited material status"
+		},
+		"S3F16": {
+			"name": "Material Status Acknowledge",
+			"dir": "H→E",
+			"desc": "Ack material status"
+		},
+		"S3F17": {
+			"name": "Carrier Action Request",
+			"dir": "H→E",
+			"desc": "Request carrier action"
+		},
+		"S3F18": {
+			"name": "Carrier Action Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack carrier action"
+		},
+		"S4F1": {
+			"name": "Material Transfer Request",
+			"dir": "H→E",
+			"desc": "Request material transfer"
+		},
+		"S4F2": {
+			"name": "Material Transfer Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack transfer request"
+		},
+		"S4F19": {
+			"name": "Material Received",
+			"dir": "E→H",
+			"desc": "Material received notification"
+		},
+		"S4F20": {
+			"name": "Material Received Acknowledge",
+			"dir": "H→E",
+			"desc": "Ack material received"
 		},
 		"S5F1": {
-			"name": "Alarm Report",
+			"name": "Alarm Report Send",
 			"dir": "E→H",
-			"desc": "Equipment reports alarm"
+			"desc": "Equipment reports alarm condition"
 		},
 		"S5F2": {
-			"name": "Alarm Ack",
+			"name": "Alarm Report Ack",
 			"dir": "H→E",
 			"desc": "Host acknowledges alarm"
 		},
-		"S6F11": {
-			"name": "Event Report",
+		"S5F3": {
+			"name": "Enable/Disable Alarm Send",
+			"dir": "H→E",
+			"desc": "Enable/disable specific alarms"
+		},
+		"S5F4": {
+			"name": "Enable/Disable Alarm Acknowledge",
 			"dir": "E→H",
-			"desc": "Equipment sending event data"
+			"desc": "Ack alarm enable/disable"
+		},
+		"S5F5": {
+			"name": "List Alarms Request",
+			"dir": "H→E",
+			"desc": "Request list of enabled alarms"
+		},
+		"S5F6": {
+			"name": "List Alarms Data",
+			"dir": "E→H",
+			"desc": "List of enabled alarm IDs"
+		},
+		"S5F7": {
+			"name": "List Enabled Alarm Request",
+			"dir": "H→E",
+			"desc": "Request enabled alarm list"
+		},
+		"S5F8": {
+			"name": "List Enabled Alarm Data",
+			"dir": "E→H",
+			"desc": "Enabled alarm list"
+		},
+		"S5F9": {
+			"name": "Exception Post Request",
+			"dir": "H→E",
+			"desc": "Post exception to equipment"
+		},
+		"S5F10": {
+			"name": "Exception Post Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack exception post"
+		},
+		"S5F13": {
+			"name": "Exception Clear Request",
+			"dir": "H→E",
+			"desc": "Request exception clear"
+		},
+		"S5F14": {
+			"name": "Exception Clear Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack exception clear"
+		},
+		"S6F11": {
+			"name": "Event Report Send",
+			"dir": "E→H",
+			"desc": "Equipment sends collection event report"
 		},
 		"S6F12": {
 			"name": "Event Report Ack",
 			"dir": "H→E",
-			"desc": "Host acknowledges event"
+			"desc": "Host acknowledges event report"
+		},
+		"S6F15": {
+			"name": "Event Report Request",
+			"dir": "H→E",
+			"desc": "Request event report by CEID"
+		},
+		"S6F16": {
+			"name": "Event Report Data",
+			"dir": "E→H",
+			"desc": "Event report data response"
+		},
+		"S6F19": {
+			"name": "Individual Report Request",
+			"dir": "H→E",
+			"desc": "Request individual report by RPTID"
+		},
+		"S6F20": {
+			"name": "Individual Report Data",
+			"dir": "E→H",
+			"desc": "Individual report data"
+		},
+		"S6F23": {
+			"name": "Request Spooled Data",
+			"dir": "H→E",
+			"desc": "Request spooled data"
+		},
+		"S6F24": {
+			"name": "Spooled Data",
+			"dir": "E→H",
+			"desc": "Spooled data send"
+		},
+		"S6F25": {
+			"name": "Trace Data Collection",
+			"dir": "E→H",
+			"desc": "Send trace data"
+		},
+		"S6F26": {
+			"name": "Trace Data Acknowledge",
+			"dir": "H→E",
+			"desc": "Ack trace data"
 		},
 		"S7F1": {
-			"name": "Program Load Inquire",
+			"name": "Process Program Load Inquire",
 			"dir": "H→E",
-			"desc": "Check if can load program"
+			"desc": "Inquire if equipment can receive program"
 		},
 		"S7F2": {
-			"name": "Program Load Grant",
+			"name": "Process Program Load Grant",
 			"dir": "E→H",
 			"desc": "Grant/deny program load"
 		},
 		"S7F3": {
-			"name": "Program Send",
+			"name": "Process Program Send",
 			"dir": "H→E",
-			"desc": "Send process program"
+			"desc": "Send process program to equipment"
 		},
 		"S7F4": {
-			"name": "Program Ack",
+			"name": "Process Program Ack",
 			"dir": "E→H",
-			"desc": "Acknowledge program receipt"
+			"desc": "Ack program receipt"
+		},
+		"S7F5": {
+			"name": "Process Program Request",
+			"dir": "H→E",
+			"desc": "Request process program from equipment"
+		},
+		"S7F6": {
+			"name": "Process Program Data",
+			"dir": "E→H",
+			"desc": "Process program data"
+		},
+		"S7F17": {
+			"name": "Delete Process Program Send",
+			"dir": "H→E",
+			"desc": "Delete process program(s)"
+		},
+		"S7F18": {
+			"name": "Delete Process Program Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack delete"
+		},
+		"S7F19": {
+			"name": "Current EPPD Request",
+			"dir": "H→E",
+			"desc": "Request current process program ID"
+		},
+		"S7F20": {
+			"name": "Current EPPD Data",
+			"dir": "E→H",
+			"desc": "Current process program ID"
+		},
+		"S7F23": {
+			"name": "Formatted Process Program Send",
+			"dir": "H→E",
+			"desc": "Send formatted program"
+		},
+		"S7F24": {
+			"name": "Formatted Process Program Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack formatted program"
+		},
+		"S7F25": {
+			"name": "Formatted Process Program Request",
+			"dir": "H→E",
+			"desc": "Request formatted program"
+		},
+		"S7F26": {
+			"name": "Formatted Process Program Data",
+			"dir": "E→H",
+			"desc": "Formatted program data"
 		},
 		"S9F1": {
 			"name": "Unrecognized Device ID",
 			"dir": "E→H",
-			"desc": "Device ID not recognized"
+			"desc": "Equipment does not recognize device ID"
 		},
 		"S9F3": {
-			"name": "Unrecognized Stream",
+			"name": "Unrecognized Stream Type",
 			"dir": "E→H",
 			"desc": "Stream type not recognized"
 		},
 		"S9F5": {
-			"name": "Unrecognized Function",
+			"name": "Unrecognized Function Type",
 			"dir": "E→H",
 			"desc": "Function type not recognized"
 		},
 		"S9F7": {
 			"name": "Illegal Data",
 			"dir": "E→H",
-			"desc": "Data format/content illegal"
+			"desc": "Data format or content is illegal"
+		},
+		"S9F9": {
+			"name": "Transaction Timer Timeout",
+			"dir": "E→H",
+			"desc": "Transaction timer expired"
+		},
+		"S9F11": {
+			"name": "Data Too Long",
+			"dir": "E→H",
+			"desc": "Message data length exceeds maximum"
+		},
+		"S9F13": {
+			"name": "Conversation Timeout",
+			"dir": "E→H",
+			"desc": "Conversation timeout occurred"
 		},
 		"S10F1": {
 			"name": "Terminal Request",
 			"dir": "E→H",
-			"desc": "Request terminal display"
+			"desc": "Equipment requests terminal display"
 		},
 		"S10F2": {
 			"name": "Terminal Ack",
 			"dir": "H→E",
-			"desc": "Acknowledge terminal request"
+			"desc": "Host acknowledges terminal request"
+		},
+		"S10F3": {
+			"name": "Terminal Display Single",
+			"dir": "H→E",
+			"desc": "Display single line on terminal"
+		},
+		"S10F4": {
+			"name": "Terminal Display Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack display"
+		},
+		"S10F5": {
+			"name": "Terminal Display Multi-Block",
+			"dir": "H→E",
+			"desc": "Display multiple blocks on terminal"
+		},
+		"S10F6": {
+			"name": "Terminal Display Multi-Block Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack multi-block display"
+		},
+		"S14F1": {
+			"name": "GetAttr Request",
+			"dir": "H→E",
+			"desc": "Request object attributes (GEM300)"
+		},
+		"S14F2": {
+			"name": "GetAttr Data",
+			"dir": "E→H",
+			"desc": "Object attribute data"
+		},
+		"S14F3": {
+			"name": "SetAttr Request",
+			"dir": "H→E",
+			"desc": "Set object attributes"
+		},
+		"S14F4": {
+			"name": "SetAttr Data",
+			"dir": "E→H",
+			"desc": "Ack attribute set"
+		},
+		"S14F5": {
+			"name": "ListAttr Request",
+			"dir": "H→E",
+			"desc": "List object attributes"
+		},
+		"S14F6": {
+			"name": "ListAttr Data",
+			"dir": "E→H",
+			"desc": "List of attributes"
+		},
+		"S14F7": {
+			"name": "CreateObject Request",
+			"dir": "H→E",
+			"desc": "Create new object"
+		},
+		"S14F8": {
+			"name": "CreateObject Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack object creation"
+		},
+		"S14F9": {
+			"name": "DeleteObject Request",
+			"dir": "H→E",
+			"desc": "Delete object"
+		},
+		"S14F10": {
+			"name": "DeleteObject Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack object deletion"
+		},
+		"S15F3": {
+			"name": "Recipe Name Space Request",
+			"dir": "H→E",
+			"desc": "Request recipe name space"
+		},
+		"S15F4": {
+			"name": "Recipe Name Space Data",
+			"dir": "E→H",
+			"desc": "Recipe name space list"
+		},
+		"S15F5": {
+			"name": "Recipe Upload Request",
+			"dir": "H→E",
+			"desc": "Request recipe upload"
+		},
+		"S15F6": {
+			"name": "Recipe Upload Data",
+			"dir": "E→H",
+			"desc": "Recipe data upload"
+		},
+		"S15F13": {
+			"name": "Recipe Download Request",
+			"dir": "H→E",
+			"desc": "Download recipe to equipment"
+		},
+		"S15F14": {
+			"name": "Recipe Download Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack recipe download"
 		},
 		"S16F1": {
 			"name": "Material ID Read Request",
@@ -178,7 +653,67 @@
 		"S16F2": {
 			"name": "Material ID Read Ack",
 			"dir": "H→E",
-			"desc": "Acknowledge material ID read"
+			"desc": "Ack material ID read"
+		},
+		"S16F3": {
+			"name": "Material ID Write Request",
+			"dir": "H→E",
+			"desc": "Write material ID"
+		},
+		"S16F4": {
+			"name": "Material ID Write Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack material ID write"
+		},
+		"S16F5": {
+			"name": "Material Verification Request",
+			"dir": "H→E",
+			"desc": "Verify material data"
+		},
+		"S16F6": {
+			"name": "Material Verification Data",
+			"dir": "E→H",
+			"desc": "Material verification result"
+		},
+		"S16F7": {
+			"name": "Get Substrate History Request",
+			"dir": "H→E",
+			"desc": "Request substrate processing history"
+		},
+		"S16F8": {
+			"name": "Get Substrate History Data",
+			"dir": "E→H",
+			"desc": "Substrate history data"
+		},
+		"S16F9": {
+			"name": "Set Substrate Location Request",
+			"dir": "H→E",
+			"desc": "Set substrate location"
+		},
+		"S16F10": {
+			"name": "Set Substrate Location Ack",
+			"dir": "E→H",
+			"desc": "Ack substrate location set"
+		},
+		"S16F11": {
+			"name": "Get Material Data Request",
+			"dir": "H→E",
+			"desc": "Request material data"
+		},
+		"S16F12": {
+			"name": "Get Material Data",
+			"dir": "E→H",
+			"desc": "Material data response"
+		},
+		"S16F13": {
+			"name": "Get Substrate Destination Request",
+			"dir": "H→E",
+			"desc": "Request substrate destination"
+		},
+		"S16F14": {
+			"name": "Get Substrate Destination Data",
+			"dir": "E→H",
+			"desc": "Substrate destination data"
 		},
 		"S16F15": {
 			"name": "Material Received Notification",
@@ -188,7 +723,47 @@
 		"S16F16": {
 			"name": "Material Received Ack",
 			"dir": "H→E",
-			"desc": "Acknowledge material received"
+			"desc": "Acknowledge material received notification"
+		},
+		"S16F17": {
+			"name": "Material Removed Notification",
+			"dir": "E→H",
+			"desc": "Notify material removed from location"
+		},
+		"S16F18": {
+			"name": "Material Removed Acknowledge",
+			"dir": "H→E",
+			"desc": "Acknowledge material removed notification"
+		},
+		"S16F19": {
+			"name": "Get Processing State Request",
+			"dir": "H→E",
+			"desc": "Request material processing state"
+		},
+		"S16F20": {
+			"name": "Get Processing State Data",
+			"dir": "E→H",
+			"desc": "Material processing state"
+		},
+		"S17F1": {
+			"name": "Clock Request",
+			"dir": "H→E",
+			"desc": "Request equipment clock time"
+		},
+		"S17F2": {
+			"name": "Clock Data",
+			"dir": "E→H",
+			"desc": "Equipment clock time"
+		},
+		"S17F3": {
+			"name": "Clock Set Request",
+			"dir": "H→E",
+			"desc": "Set equipment clock"
+		},
+		"S17F4": {
+			"name": "Clock Set Acknowledge",
+			"dir": "E→H",
+			"desc": "Ack clock set"
 		}
 	}
 }

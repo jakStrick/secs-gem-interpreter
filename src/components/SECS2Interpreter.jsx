@@ -20,6 +20,18 @@ import {
 const SECS2InterpreterApp = () => {
 	const [activeTab, setActiveTab] = useState("interpreter");
 
+	// Persistent state for Parser tab
+	const [parserState, setParserState] = useState({
+		logContent: "",
+		parsedMessages: [],
+		filterStream: "all",
+		searchTerm: "",
+		isProcessing: false,
+		progress: 0,
+		fileSize: 0,
+		displayLimit: 100,
+	});
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
 			<div className="max-w-7xl mx-auto">
@@ -73,7 +85,10 @@ const SECS2InterpreterApp = () => {
 					{activeTab === "interpreter" ? (
 						<InterpreterTab />
 					) : (
-						<ParserTab />
+						<ParserTab
+							parserState={parserState}
+							setParserState={setParserState}
+						/>
 					)}
 				</div>
 			</div>
@@ -415,18 +430,40 @@ const InterpreterTab = () => {
 };
 
 // ==================== PARSER TAB ====================
-const ParserTab = () => {
-	const [logContent, setLogContent] = useState("");
-	const [parsedMessages, setParsedMessages] = useState([]);
-	const [filterStream, setFilterStream] = useState("all");
-	const [searchTerm, setSearchTerm] = useState("");
-	const [isProcessing, setIsProcessing] = useState(false);
-	const [progress, setProgress] = useState(0);
-	const [fileSize, setFileSize] = useState(0);
-	const [displayLimit, setDisplayLimit] = useState(100);
+const ParserTab = ({ parserState, setParserState }) => {
 	const abortControllerRef = React.useRef(null);
 
 	const MESSAGE_INFO = messages.MESSAGE_INFO;
+
+	// Destructure state for easier access
+	const {
+		logContent,
+		parsedMessages,
+		filterStream,
+		searchTerm,
+		isProcessing,
+		progress,
+		fileSize,
+		displayLimit,
+	} = parserState;
+
+	// Helper functions to update state
+	const setLogContent = (value) =>
+		setParserState((prev) => ({ ...prev, logContent: value }));
+	const setParsedMessages = (value) =>
+		setParserState((prev) => ({ ...prev, parsedMessages: value }));
+	const setFilterStream = (value) =>
+		setParserState((prev) => ({ ...prev, filterStream: value }));
+	const setSearchTerm = (value) =>
+		setParserState((prev) => ({ ...prev, searchTerm: value }));
+	const setIsProcessing = (value) =>
+		setParserState((prev) => ({ ...prev, isProcessing: value }));
+	const setProgress = (value) =>
+		setParserState((prev) => ({ ...prev, progress: value }));
+	const setFileSize = (value) =>
+		setParserState((prev) => ({ ...prev, fileSize: value }));
+	const setDisplayLimit = (value) =>
+		setParserState((prev) => ({ ...prev, displayLimit: value }));
 
 	const parseLogFile = (content) => {
 		const lines = content.split("\n");
@@ -710,13 +747,16 @@ const ParserTab = () => {
 							</button>
 							<button
 								onClick={() => {
-									setLogContent("");
-									setParsedMessages([]);
-									setFilterStream("all");
-									setSearchTerm("");
-									setProgress(0);
-									setFileSize(0);
-									setDisplayLimit(100);
+									setParserState({
+										logContent: "",
+										parsedMessages: [],
+										filterStream: "all",
+										searchTerm: "",
+										isProcessing: false,
+										progress: 0,
+										fileSize: 0,
+										displayLimit: 100,
+									});
 								}}
 								className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all">
 								<AlertCircle className="w-5 h-5" />
