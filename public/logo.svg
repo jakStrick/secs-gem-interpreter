@@ -75,33 +75,74 @@
       <!-- Magnifying glass lens with glass effect -->
       <circle cx="0" cy="0" r="18" fill="rgba(251, 191, 36, 0.15)" stroke="#fbbf24" stroke-width="3" opacity="0.9"/>
 
-      <!-- Binary digits scrolling inside the lens -->
+      <!-- Binary digits scrolling inside the lens - multiple streams for random appearance -->
       <g clip-path="url(#lensClip)">
-        <!-- First column of binary -->
+        <!-- Stream 1 - Left column -->
         <g opacity="0.9">
-          <text x="-10" y="-5" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
-          <text x="-10" y="5" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">0</text>
-          <text x="-10" y="15" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
-          <text x="-10" y="25" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
-          <animate attributeName="y" values="-5;-25" dur="1.5s" repeatCount="indefinite"/>
+          <text x="-11" y="-10" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="-11" y="-2" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="-11" y="6" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="-11" y="14" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="-11" y="22" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="-11" y="30" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <animate attributeName="y" values="-10;-30" dur="1.3s" repeatCount="indefinite"/>
         </g>
 
-        <!-- Second column of binary -->
-        <g opacity="0.8">
-          <text x="0" y="-8" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">0</text>
-          <text x="0" y="2" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">1</text>
-          <text x="0" y="12" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">1</text>
-          <text x="0" y="22" font-family="monospace" font-size="8" fill="#fcd34d" font-weight="bold">0</text>
-          <animate attributeName="y" values="-8;-28" dur="1.8s" repeatCount="indefinite"/>
+        <!-- Stream 2 - Center-left column -->
+        <g opacity="0.85">
+          <text x="-5" y="-15" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">0</text>
+          <text x="-5" y="-7" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="-5" y="1" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">0</text>
+          <text x="-5" y="9" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="-5" y="17" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="-5" y="25" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">0</text>
+          <animate attributeName="y" values="-15;-35" dur="1.7s" repeatCount="indefinite"/>
         </g>
 
-        <!-- Third column of binary -->
+        <!-- Stream 3 - Center column -->
         <g opacity="0.9">
-          <text x="7" y="-3" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
-          <text x="7" y="7" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">1</text>
-          <text x="7" y="17" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">0</text>
-          <text x="7" y="27" font-family="monospace" font-size="8" fill="#fbbf24" font-weight="bold">0</text>
-          <animate attributeName="y" values="-3;-23" dur="2.1s" repeatCount="indefinite"/>
+          <text x="1" y="-8" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="1" y="0" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="1" y="8" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="1" y="16" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="1" y="24" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="1" y="32" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <animate attributeName="y" values="-8;-28" dur="1.5s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- Stream 4 - Center-right column -->
+        <g opacity="0.88">
+          <text x="7" y="-12" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">0</text>
+          <text x="7" y="-4" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">0</text>
+          <text x="7" y="4" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="7" y="12" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">1</text>
+          <text x="7" y="20" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">0</text>
+          <text x="7" y="28" font-family="monospace" font-size="7" fill="#fcd34d" font-weight="bold">1</text>
+          <animate attributeName="y" values="-12;-32" dur="1.9s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- Stream 5 - Right column -->
+        <g opacity="0.92">
+          <text x="12" y="-6" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="12" y="2" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="12" y="10" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <text x="12" y="18" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="12" y="26" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">0</text>
+          <text x="12" y="34" font-family="monospace" font-size="7" fill="#fbbf24" font-weight="bold">1</text>
+          <animate attributeName="y" values="-6;-26" dur="2.2s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- Additional flickering effect for randomness -->
+        <g opacity="0.7">
+          <text x="-8" y="5" font-family="monospace" font-size="6" fill="#fde68a" font-weight="bold">1
+            <animate attributeName="opacity" values="0.7;0.3;0.8;0.4;0.9" dur="0.6s" repeatCount="indefinite"/>
+          </text>
+          <text x="4" y="-5" font-family="monospace" font-size="6" fill="#fde68a" font-weight="bold">0
+            <animate attributeName="opacity" values="0.5;0.9;0.3;0.7;0.6" dur="0.8s" repeatCount="indefinite"/>
+          </text>
+          <text x="9" y="8" font-family="monospace" font-size="6" fill="#fde68a" font-weight="bold">1
+            <animate attributeName="opacity" values="0.8;0.4;0.9;0.5;0.7" dur="0.7s" repeatCount="indefinite"/>
+          </text>
         </g>
       </g>
 
