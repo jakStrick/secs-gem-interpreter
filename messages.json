@@ -1,0 +1,194 @@
+{
+	"MESSAGE_INFO": {
+		"S1F1": {
+			"name": "Are You There Request",
+			"dir": "H→E",
+			"desc": "Host checking if equipment is online"
+		},
+		"S1F2": {
+			"name": "Online Data",
+			"dir": "E→H",
+			"desc": "Equipment responds with model and version"
+		},
+		"S1F3": {
+			"name": "Status Request",
+			"dir": "H→E",
+			"desc": "Request status variables"
+		},
+		"S1F4": {
+			"name": "Status Data",
+			"dir": "E→H",
+			"desc": "Status variable values"
+		},
+		"S1F13": {
+			"name": "Establish Comms Request",
+			"dir": "H→E",
+			"desc": "Initialize communications"
+		},
+		"S1F14": {
+			"name": "Establish Comms Ack",
+			"dir": "E→H",
+			"desc": "Acknowledge comms establishment"
+		},
+		"S2F13": {
+			"name": "Equipment Constant Request",
+			"dir": "H→E",
+			"desc": "Request constants"
+		},
+		"S2F14": {
+			"name": "Equipment Constant Data",
+			"dir": "E→H",
+			"desc": "Constant values"
+		},
+		"S2F17": {
+			"name": "Date/Time Request",
+			"dir": "H→E",
+			"desc": "Request current time"
+		},
+		"S2F18": {
+			"name": "Date/Time Data",
+			"dir": "E→H",
+			"desc": "Current date and time"
+		},
+		"S2F31": {
+			"name": "Date/Time Set",
+			"dir": "H→E",
+			"desc": "Set equipment time"
+		},
+		"S2F32": {
+			"name": "Date/Time Set Ack",
+			"dir": "E→H",
+			"desc": "Acknowledge time set"
+		},
+		"S2F33": {
+			"name": "Define Report",
+			"dir": "H→E",
+			"desc": "Define report structure"
+		},
+		"S2F34": {
+			"name": "Define Report Ack",
+			"dir": "E→H",
+			"desc": "Acknowledge report definition"
+		},
+		"S2F35": {
+			"name": "Link Event Report",
+			"dir": "H→E",
+			"desc": "Link events to reports"
+		},
+		"S2F36": {
+			"name": "Link Event Report Ack",
+			"dir": "E→H",
+			"desc": "Acknowledge event link"
+		},
+		"S2F37": {
+			"name": "Enable/Disable Events",
+			"dir": "H→E",
+			"desc": "Enable or disable events"
+		},
+		"S2F38": {
+			"name": "Enable/Disable Events Ack",
+			"dir": "E→H",
+			"desc": "Acknowledge event enable/disable"
+		},
+		"S2F41": {
+			"name": "Host Command",
+			"dir": "H→E",
+			"desc": "Host sending command to equipment"
+		},
+		"S2F42": {
+			"name": "Command Ack",
+			"dir": "E→H",
+			"desc": "Equipment acknowledges command"
+		},
+		"S5F1": {
+			"name": "Alarm Report",
+			"dir": "E→H",
+			"desc": "Equipment reports alarm"
+		},
+		"S5F2": {
+			"name": "Alarm Ack",
+			"dir": "H→E",
+			"desc": "Host acknowledges alarm"
+		},
+		"S6F11": {
+			"name": "Event Report",
+			"dir": "E→H",
+			"desc": "Equipment sending event data"
+		},
+		"S6F12": {
+			"name": "Event Report Ack",
+			"dir": "H→E",
+			"desc": "Host acknowledges event"
+		},
+		"S7F1": {
+			"name": "Program Load Inquire",
+			"dir": "H→E",
+			"desc": "Check if can load program"
+		},
+		"S7F2": {
+			"name": "Program Load Grant",
+			"dir": "E→H",
+			"desc": "Grant/deny program load"
+		},
+		"S7F3": {
+			"name": "Program Send",
+			"dir": "H→E",
+			"desc": "Send process program"
+		},
+		"S7F4": {
+			"name": "Program Ack",
+			"dir": "E→H",
+			"desc": "Acknowledge program receipt"
+		},
+		"S9F1": {
+			"name": "Unrecognized Device ID",
+			"dir": "E→H",
+			"desc": "Device ID not recognized"
+		},
+		"S9F3": {
+			"name": "Unrecognized Stream",
+			"dir": "E→H",
+			"desc": "Stream type not recognized"
+		},
+		"S9F5": {
+			"name": "Unrecognized Function",
+			"dir": "E→H",
+			"desc": "Function type not recognized"
+		},
+		"S9F7": {
+			"name": "Illegal Data",
+			"dir": "E→H",
+			"desc": "Data format/content illegal"
+		},
+		"S10F1": {
+			"name": "Terminal Request",
+			"dir": "E→H",
+			"desc": "Request terminal display"
+		},
+		"S10F2": {
+			"name": "Terminal Ack",
+			"dir": "H→E",
+			"desc": "Acknowledge terminal request"
+		},
+		"S16F1": {
+			"name": "Material ID Read Request",
+			"dir": "E→H",
+			"desc": "Request material ID read"
+		},
+		"S16F2": {
+			"name": "Material ID Read Ack",
+			"dir": "H→E",
+			"desc": "Acknowledge material ID read"
+		},
+		"S16F15": {
+			"name": "Material Received Notification",
+			"dir": "E→H",
+			"desc": "Notify material received at location"
+		},
+		"S16F16": {
+			"name": "Material Received Ack",
+			"dir": "H→E",
+			"desc": "Acknowledge material received"
+		}
+	}
+}
