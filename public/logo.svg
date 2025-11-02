@@ -146,14 +146,17 @@
         </g>
       </g>
 
-      <!-- Magnifying glass handle -->
-      <line x1="13" y1="13" x2="25" y2="25" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+      <!-- Magnifying glass handle - pointing away from center -->
+      <line x1="-13" y1="-13" x2="-25" y2="-25" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
     </g>
   </g>
 
   <!-- Center SECS text -->
   <text x="100" y="105" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">SECS</text>
   <text x="100" y="120" font-family="Arial, sans-serif" font-size="10" fill="#e0f2fe" text-anchor="middle">GEM</text>
+
+  <!-- Bottom tagline text -->
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="9" fill="#93c5fd" text-anchor="middle" opacity="0.9">Log Parser</text>
 
   <!-- Decorative corner brackets -->
   <g stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.5">
