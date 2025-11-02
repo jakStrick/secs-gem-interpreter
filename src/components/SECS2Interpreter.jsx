@@ -24,7 +24,7 @@ const SECS2InterpreterApp = () => {
 	const [parserState, setParserState] = useState({
 		logContent: "",
 		parsedMessages: [],
-		filterStream: "all",
+		filterStream: "",
 		searchTerm: "",
 		isProcessing: false,
 		progress: 0,
@@ -822,6 +822,7 @@ const ParserTab = ({ parserState, setParserState }) => {
 							value={filterStream}
 							onChange={(e) => setFilterStream(e.target.value)}
 							className="bg-slate-900 text-slate-300 px-3 py-2 rounded-lg border border-slate-600 text-sm">
+							<option value="">Select A Stream</option>
 							<option value="all">All Streams</option>
 							<option value="S1">S1 - Equipment Status</option>
 							<option value="S2">S2 - Equipment Control</option>
@@ -845,7 +846,7 @@ const ParserTab = ({ parserState, setParserState }) => {
 							type="text"
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							placeholder="Search messages..."
+							placeholder="Search stream messages..."
 							className="flex-1 bg-slate-900 text-slate-300 px-3 py-2 rounded-lg border border-slate-600 text-sm"
 						/>
 					</div>
