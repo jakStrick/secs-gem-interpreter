@@ -10,7 +10,7 @@
 
 html,
 body {
-	scrollbar-width: thin;
+	scrollbar-width: thick;
 	scrollbar-color: #475569 #1e293b;
 }
 
