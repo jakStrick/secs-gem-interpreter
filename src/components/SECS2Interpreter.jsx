@@ -470,35 +470,42 @@ const ParserTab = ({ parserState, setParserState }) => {
 		const messages = [];
 
 		lines.forEach((line, index) => {
+			// Match format: <- Link (Passive): 3 - Message Received: DataMessage - S1F3
 			const receivedMatch = line.match(
-				/<- Received SECS message: (S\d+F\d+) - Transaction: (\d+)/
+				/<- Link \([^)]+\): (\d+) - Message Received: DataMessage - S(\d+)F(\d+)/
 			);
 			if (receivedMatch) {
 				const timestamp =
-					line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+					line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+				const transaction = receivedMatch[1];
+				const stream = receivedMatch[2];
+				const function_ = receivedMatch[3];
 				messages.push({
 					timestamp,
 					direction: "received",
-					messageType: receivedMatch[1],
-					transaction: receivedMatch[2],
+					messageType: `S${stream}F${function_}`,
+					transaction: transaction,
 					rawLine: line,
 					lineNumber: index + 1,
 				});
 			}
 
+			// Match format: -> Link (Passive): 3 - Message Enqueued: DataMessage - S1F4
 			const sentMatch = line.match(
-				/-> Send SECS message: (S\d+F\d+) - Transaction: (\d+) (.+)/
+				/-> Link \([^)]+\): (\d+) - Message Enqueued: DataMessage - S(\d+)F(\d+)/
 			);
 			if (sentMatch) {
 				const timestamp =
-					line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-				const dataStr = sentMatch[3];
+					line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+				const transaction = sentMatch[1];
+				const stream = sentMatch[2];
+				const function_ = sentMatch[3];
 				messages.push({
 					timestamp,
 					direction: "sent",
-					messageType: sentMatch[1],
-					transaction: sentMatch[2],
-					data: dataStr,
+					messageType: `S${stream}F${function_}`,
+					transaction: transaction,
+					data: "",
 					rawLine: line,
 					lineNumber: index + 1,
 				});
@@ -637,7 +644,9 @@ const ParserTab = ({ parserState, setParserState }) => {
 
 	const filteredMessages = parsedMessages.filter((msg) => {
 		const matchesFilter =
-			filterStream === "all" || msg.messageType.startsWith(filterStream);
+			filterStream === "" ||
+			filterStream === "all" ||
+			msg.messageType.startsWith(filterStream);
 		const matchesSearch =
 			!searchTerm ||
 			msg.messageType.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -853,87 +862,73 @@ const ParserTab = ({ parserState, setParserState }) => {
 				</div>
 			)}
 
-			{/* Conversation Pairs View */}
-			{conversationPairs.length > 0 && (
+			{/* All Messages View */}
+			{filteredMessages.length > 0 && (
 				<div className="space-y-4">
 					<h2 className="text-xl font-bold text-slate-200 flex items-center gap-2">
 						<MessageSquare className="w-6 h-6" />
-						Message Conversations ({conversationPairs.length})
+						All Messages ({filteredMessages.length})
 					</h2>
 
-					<div className="space-y-3 max-h-[500px] overflow-y-auto">
-						{conversationPairs.slice(0, displayLimit).map((pair, idx) => {
-							const reqInfo =
-								MESSAGE_INFO[pair.request.messageType] || {};
-							const resInfo =
-								MESSAGE_INFO[pair.response.messageType] || {};
+					<div className="space-y-2 max-h-[500px] overflow-y-auto">
+						{filteredMessages.slice(0, displayLimit).map((msg, idx) => {
+							const msgInfo = MESSAGE_INFO[msg.messageType] || {};
+							const bgColor =
+								msg.direction === "received"
+									? "bg-green-900/20 border-green-500"
+									: "bg-blue-900/20 border-blue-500";
+							const textColor =
+								msg.direction === "received"
+									? "text-green-300"
+									: "text-blue-300";
 
 							return (
 								<div
 									key={idx}
-									className="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
-									<div className="flex items-center gap-2 mb-3 text-sm text-slate-400">
-										<Clock className="w-4 h-4" />
-										<span>{pair.request.timestamp}</span>
-										<span className="mx-2">→</span>
-										<span>{pair.response.timestamp}</span>
-										<span className="ml-auto font-mono text-xs bg-slate-800 px-2 py-1 rounded">
-											Transaction: {pair.transaction}
+									className={`${bgColor} border-l-4 rounded-lg p-3`}>
+									<div className="flex items-center gap-3 mb-2">
+										<span className="text-xl">
+											{msg.direction === "received" ? "⬇️" : "⬆️"}
 										</span>
-									</div>
-
-									<div className="grid md:grid-cols-2 gap-4">
-										<div className="bg-green-900/20 border-l-4 border-green-500 rounded p-3">
-											<div className="flex items-center gap-2 mb-2">
-												<span className="text-2xl">⬇️</span>
-												<div>
-													<div className="font-mono font-bold text-green-300">
-														{pair.request.messageType}
-													</div>
-													<div className="text-xs text-green-200">
-														{reqInfo.name}
-													</div>
-												</div>
+										<div className="flex-1">
+											<div className="flex items-center gap-2">
+												<span
+													className={`font-mono font-bold ${textColor}`}>
+													{msg.messageType}
+												</span>
+												<span className="text-xs text-slate-400">
+													{msgInfo.name}
+												</span>
 											</div>
-											<div className="text-xs text-slate-400 mt-2">
-												{reqInfo.desc}
+											<div className="text-xs text-slate-400 mt-1">
+												{msgInfo.desc}
 											</div>
 										</div>
-
-										<div className="bg-blue-900/20 border-l-4 border-blue-500 rounded p-3">
-											<div className="flex items-center gap-2 mb-2">
-												<span className="text-2xl">⬆️</span>
-												<div>
-													<div className="font-mono font-bold text-blue-300">
-														{pair.response.messageType}
-													</div>
-													<div className="text-xs text-blue-200">
-														{resInfo.name}
-													</div>
-												</div>
-											</div>
-											{pair.response.data && (
-												<div className="text-xs text-slate-300 font-mono mt-2 bg-slate-900 p-2 rounded overflow-x-auto max-w-full">
-													<div className="whitespace-nowrap">
-														{pair.response.data}
-													</div>
-												</div>
-											)}
-											<div className="text-xs text-slate-400 mt-2">
-												{resInfo.desc}
-											</div>
+										<div className="text-xs text-slate-400">
+											<Clock className="w-3 h-3 inline mr-1" />
+											{msg.timestamp}
+										</div>
+										<div className="text-xs font-mono bg-slate-800 px-2 py-1 rounded">
+											Txn: {msg.transaction}
 										</div>
 									</div>
+									{msg.rawLine && (
+										<div className="text-xs font-mono text-slate-300 bg-slate-900 p-2 rounded overflow-x-auto">
+											<div className="whitespace-nowrap">
+												{msg.rawLine}
+											</div>
+										</div>
+									)}
 								</div>
 							);
 						})}
 					</div>
 
-					{conversationPairs.length > displayLimit && (
+					{filteredMessages.length > displayLimit && (
 						<button
 							onClick={() => setDisplayLimit((prev) => prev + 100)}
 							className="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all">
-							Show More ({conversationPairs.length - displayLimit}{" "}
+							Show More ({filteredMessages.length - displayLimit}{" "}
 							remaining)
 						</button>
 					)}
