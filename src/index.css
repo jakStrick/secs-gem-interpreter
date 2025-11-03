@@ -2,13 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Always show scrollbars */
+/* Always show scrollbars - Firefox */
 * {
-	scrollbar-width: auto;
+	scrollbar-width: thin;
 	scrollbar-color: #475569 #1e293b;
 }
 
-/* Webkit browsers (Chrome, Safari, Edge) */
+html,
+body {
+	scrollbar-width: thin;
+	scrollbar-color: #475569 #1e293b;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge, DuckDuckGo) */
 *::-webkit-scrollbar {
 	width: 12px;
 	height: 12px;
@@ -35,9 +41,21 @@ html {
 	overflow-x: auto;
 }
 
-/* Ensure scrollable containers always show scrollbars */
+body {
+	overflow-y: scroll;
+}
+
+/* Ensure scrollable containers always show scrollbars - Firefox */
 .overflow-auto,
 .overflow-x-auto,
 .overflow-y-auto {
-	scrollbar-width: auto !important;
+	scrollbar-width: thin !important;
+	scrollbar-color: #475569 #1e293b !important;
+}
+
+/* Additional Firefox support for specific scrollable areas */
+div[class*="overflow"],
+div[class*="scroll"] {
+	scrollbar-width: thin;
+	scrollbar-color: #475569 #1e293b;
 }
