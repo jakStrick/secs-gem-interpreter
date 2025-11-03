@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 const SECS2InterpreterApp = () => {
-	const [activeTab, setActiveTab] = useState("interpreter");
+	const [activeTab, setActiveTab] = useState("parser");
 
 	// Persistent state for Parser tab
 	const [parserState, setParserState] = useState({
@@ -59,16 +59,6 @@ const SECS2InterpreterApp = () => {
 				{/* Tab Navigation */}
 				<div className="bg-slate-800 border-x border-slate-700 flex gap-2 p-2">
 					<button
-						onClick={() => setActiveTab("interpreter")}
-						className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-							activeTab === "interpreter"
-								? "bg-blue-600 text-white shadow-lg"
-								: "bg-slate-700 text-slate-300 hover:bg-slate-600"
-						}`}>
-						<FileText className="w-5 h-5" />
-						Message Interpreter
-					</button>
-					<button
 						onClick={() => setActiveTab("parser")}
 						className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
 							activeTab === "parser"
@@ -78,17 +68,27 @@ const SECS2InterpreterApp = () => {
 						<Search className="w-5 h-5" />
 						Log Parser
 					</button>
+					<button
+						onClick={() => setActiveTab("interpreter")}
+						className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+							activeTab === "interpreter"
+								? "bg-blue-600 text-white shadow-lg"
+								: "bg-slate-700 text-slate-300 hover:bg-slate-600"
+						}`}>
+						<FileText className="w-5 h-5" />
+						Message Interpreter
+					</button>
 				</div>
 
 				{/* Tab Content */}
 				<div className="bg-slate-800/50 backdrop-blur-sm rounded-b-lg shadow-2xl border-x border-b border-slate-700">
-					{activeTab === "interpreter" ? (
-						<InterpreterTab />
-					) : (
+					{activeTab === "parser" ? (
 						<ParserTab
 							parserState={parserState}
 							setParserState={setParserState}
 						/>
+					) : (
+						<InterpreterTab />
 					)}
 				</div>
 			</div>
