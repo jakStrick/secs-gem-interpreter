@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Always show scrollbars */
+* {
+	scrollbar-width: auto;
+	scrollbar-color: #475569 #1e293b;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #1e293b;
+	border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: #475569;
+	border-radius: 10px;
+	border: 2px solid #1e293b;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background: #64748b;
+}
+
+/* Force scrollbars to always be visible */
+html {
+	overflow-y: scroll;
+	overflow-x: auto;
+}
+
+/* Ensure scrollable containers always show scrollbars */
+.overflow-auto,
+.overflow-x-auto,
+.overflow-y-auto {
+	scrollbar-width: auto !important;
+}
