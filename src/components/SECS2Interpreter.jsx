@@ -551,34 +551,42 @@ const ParserTab = ({ parserState, setParserState }) => {
 
 				// Process complete lines
 				lines.forEach((line, lineIdx) => {
+					// Match format: <- Link (Passive): 3 - Message Received: DataMessage - S1F3
 					const receivedMatch = line.match(
-						/<- Received SECS message: (S\d+F\d+) - Transaction: (\d+)/
+						/<- Link \([^)]+\): (\d+) - Message Received: DataMessage - S(\d+)F(\d+)/
 					);
 					if (receivedMatch) {
 						const timestamp =
-							line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+							line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+						const transaction = receivedMatch[1];
+						const stream = receivedMatch[2];
+						const function_ = receivedMatch[3];
 						messages.push({
 							timestamp,
 							direction: "received",
-							messageType: receivedMatch[1],
-							transaction: receivedMatch[2],
+							messageType: `S${stream}F${function_}`,
+							transaction: transaction,
 							rawLine: line,
 							lineNumber: Math.floor(start / 100) + lineIdx + 1, // Approximate line number
 						});
 					}
 
+					// Match format: -> Link (Passive): 3 - Message Enqueued: DataMessage - S1F4
 					const sentMatch = line.match(
-						/-> Send SECS message: (S\d+F\d+) - Transaction: (\d+) (.+)/
+						/-> Link \([^)]+\): (\d+) - Message Enqueued: DataMessage - S(\d+)F(\d+)/
 					);
 					if (sentMatch) {
 						const timestamp =
-							line.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+							line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+						const transaction = sentMatch[1];
+						const stream = sentMatch[2];
+						const function_ = sentMatch[3];
 						messages.push({
 							timestamp,
 							direction: "sent",
-							messageType: sentMatch[1],
-							transaction: sentMatch[2],
-							data: sentMatch[3],
+							messageType: `S${stream}F${function_}`,
+							transaction: transaction,
+							data: "",
 							rawLine: line,
 							lineNumber: Math.floor(start / 100) + lineIdx + 1,
 						});
@@ -596,17 +604,42 @@ const ParserTab = ({ parserState, setParserState }) => {
 
 			// Process any remaining leftover
 			if (leftover) {
+				// Match format: <- Link (Passive): 3 - Message Received: DataMessage - S1F3
 				const receivedMatch = leftover.match(
-					/<- Received SECS message: (S\d+F\d+) - Transaction: (\d+)/
+					/<- Link \([^)]+\): (\d+) - Message Received: DataMessage - S(\d+)F(\d+)/
 				);
 				if (receivedMatch) {
 					const timestamp =
-						leftover.match(/^(\d{2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+						leftover.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+					const transaction = receivedMatch[1];
+					const stream = receivedMatch[2];
+					const function_ = receivedMatch[3];
 					messages.push({
 						timestamp,
 						direction: "received",
-						messageType: receivedMatch[1],
-						transaction: receivedMatch[2],
+						messageType: `S${stream}F${function_}`,
+						transaction: transaction,
+						rawLine: leftover,
+						lineNumber: totalChunks + 1,
+					});
+				}
+
+				// Match format: -> Link (Passive): 3 - Message Enqueued: DataMessage - S1F4
+				const sentMatch = leftover.match(
+					/-> Link \([^)]+\): (\d+) - Message Enqueued: DataMessage - S(\d+)F(\d+)/
+				);
+				if (sentMatch) {
+					const timestamp =
+						leftover.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+					const transaction = sentMatch[1];
+					const stream = sentMatch[2];
+					const function_ = sentMatch[3];
+					messages.push({
+						timestamp,
+						direction: "sent",
+						messageType: `S${stream}F${function_}`,
+						transaction: transaction,
+						data: "",
 						rawLine: leftover,
 						lineNumber: totalChunks + 1,
 					});
@@ -926,7 +959,7 @@ const ParserTab = ({ parserState, setParserState }) => {
 
 					{filteredMessages.length > displayLimit && (
 						<button
-							onClick={() => setDisplayLimit((prev) => prev + 100)}
+							onClick={() => setDisplayLimit(displayLimit + 100)}
 							className="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all">
 							Show More ({filteredMessages.length - displayLimit}{" "}
 							remaining)
