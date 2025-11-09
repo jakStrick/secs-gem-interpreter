@@ -694,16 +694,27 @@ const ParserTab = ({ parserState, setParserState }) => {
 			"Direction",
 			"Message Type",
 			"Transaction",
-			"Data",
 			"Line Number",
+			"Raw Log Line",
 		];
+
+		// Escape CSV fields that contain commas, quotes, or newlines
+		const escapeCSV = (field) => {
+			if (field == null) return "";
+			const str = String(field);
+			if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+				return `"${str.replace(/"/g, '""')}"`;
+			}
+			return str;
+		};
+
 		const rows = filteredMessages.map((msg) => [
-			msg.timestamp,
-			msg.direction,
-			msg.messageType,
-			msg.transaction || "",
-			msg.data || "",
-			msg.lineNumber,
+			escapeCSV(msg.timestamp),
+			escapeCSV(msg.direction),
+			escapeCSV(msg.messageType),
+			escapeCSV(msg.transaction || ""),
+			escapeCSV(msg.lineNumber),
+			escapeCSV(msg.rawLine || ""),
 		]);
 
 		const csv = [headers, ...rows].map((row) => row.join(",")).join("\n");
