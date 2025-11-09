@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import secsMessages from "/secsMessages.json";
 import messages from "/messages.json";
+import alarms from "../alarms.json";
 import {
 	AlertCircle,
 	CheckCircle,
@@ -471,15 +472,15 @@ const ParserTab = ({ parserState, setParserState }) => {
 
 		lines.forEach((line, index) => {
 			// Match format: <- Link (Passive): 3 - Message Received: DataMessage - S1F3
-			const receivedMatch = line.match(
+			const receivedLinkMatch = line.match(
 				/<- Link \([^)]+\): (\d+) - Message Received: DataMessage - S(\d+)F(\d+)/
 			);
-			if (receivedMatch) {
+			if (receivedLinkMatch) {
 				const timestamp =
 					line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-				const transaction = receivedMatch[1];
-				const stream = receivedMatch[2];
-				const function_ = receivedMatch[3];
+				const transaction = receivedLinkMatch[1];
+				const stream = receivedLinkMatch[2];
+				const function_ = receivedLinkMatch[3];
 				messages.push({
 					timestamp,
 					direction: "received",
@@ -491,21 +492,66 @@ const ParserTab = ({ parserState, setParserState }) => {
 			}
 
 			// Match format: -> Link (Passive): 3 - Message Enqueued: DataMessage - S1F4
-			const sentMatch = line.match(
+			const sentLinkMatch = line.match(
 				/-> Link \([^)]+\): (\d+) - Message Enqueued: DataMessage - S(\d+)F(\d+)/
 			);
-			if (sentMatch) {
+			if (sentLinkMatch) {
 				const timestamp =
 					line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-				const transaction = sentMatch[1];
-				const stream = sentMatch[2];
-				const function_ = sentMatch[3];
+				const transaction = sentLinkMatch[1];
+				const stream = sentLinkMatch[2];
+				const function_ = sentLinkMatch[3];
 				messages.push({
 					timestamp,
 					direction: "sent",
 					messageType: `S${stream}F${function_}`,
 					transaction: transaction,
-					data: "",
+					rawLine: line,
+					lineNumber: index + 1,
+				});
+			}
+
+			// Match format: <- Received SECS message: S5F2 - Transaction: 60500 <B[1] 00>
+			const receivedSecsMatch = line.match(
+				/<- Received SECS message: (S\d+F\d+) - Transaction: (\d+)/
+			);
+			if (receivedSecsMatch) {
+				const timestamp =
+					line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+				messages.push({
+					timestamp,
+					direction: "received",
+					messageType: receivedSecsMatch[1],
+					transaction: receivedSecsMatch[2],
+					rawLine: line,
+					lineNumber: index + 1,
+				});
+			}
+
+			// Match format: -> Send SECS message: S5F1 - Transaction: 60500 <L[3] ...>
+			const sentSecsMatch = line.match(
+				/-> Send SECS message: (S\d+F\d+) - Transaction: (\d+)/
+			);
+			if (sentSecsMatch) {
+				const timestamp =
+					line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+				const messageType = sentSecsMatch[1];
+
+				// Extract alarm ID from S5F1 messages: <U4 210355>
+				let alarmId = null;
+				if (messageType === "S5F1") {
+					const alarmMatch = line.match(/<U4 (\d+)>/);
+					if (alarmMatch) {
+						alarmId = alarmMatch[1];
+					}
+				}
+
+				messages.push({
+					timestamp,
+					direction: "sent",
+					messageType,
+					transaction: sentSecsMatch[2],
+					alarmId,
 					rawLine: line,
 					lineNumber: index + 1,
 				});
@@ -552,15 +598,15 @@ const ParserTab = ({ parserState, setParserState }) => {
 				// Process complete lines
 				lines.forEach((line, lineIdx) => {
 					// Match format: <- Link (Passive): 3 - Message Received: DataMessage - S1F3
-					const receivedMatch = line.match(
+					const receivedLinkMatch = line.match(
 						/<- Link \([^)]+\): (\d+) - Message Received: DataMessage - S(\d+)F(\d+)/
 					);
-					if (receivedMatch) {
+					if (receivedLinkMatch) {
 						const timestamp =
 							line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-						const transaction = receivedMatch[1];
-						const stream = receivedMatch[2];
-						const function_ = receivedMatch[3];
+						const transaction = receivedLinkMatch[1];
+						const stream = receivedLinkMatch[2];
+						const function_ = receivedLinkMatch[3];
 						messages.push({
 							timestamp,
 							direction: "received",
@@ -572,21 +618,66 @@ const ParserTab = ({ parserState, setParserState }) => {
 					}
 
 					// Match format: -> Link (Passive): 3 - Message Enqueued: DataMessage - S1F4
-					const sentMatch = line.match(
+					const sentLinkMatch = line.match(
 						/-> Link \([^)]+\): (\d+) - Message Enqueued: DataMessage - S(\d+)F(\d+)/
 					);
-					if (sentMatch) {
+					if (sentLinkMatch) {
 						const timestamp =
 							line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-						const transaction = sentMatch[1];
-						const stream = sentMatch[2];
-						const function_ = sentMatch[3];
+						const transaction = sentLinkMatch[1];
+						const stream = sentLinkMatch[2];
+						const function_ = sentLinkMatch[3];
 						messages.push({
 							timestamp,
 							direction: "sent",
 							messageType: `S${stream}F${function_}`,
 							transaction: transaction,
-							data: "",
+							rawLine: line,
+							lineNumber: Math.floor(start / 100) + lineIdx + 1,
+						});
+					}
+
+					// Match format: <- Received SECS message: S5F2 - Transaction: 60500 <B[1] 00>
+					const receivedSecsMatch = line.match(
+						/<- Received SECS message: (S\d+F\d+) - Transaction: (\d+)/
+					);
+					if (receivedSecsMatch) {
+						const timestamp =
+							line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+						messages.push({
+							timestamp,
+							direction: "received",
+							messageType: receivedSecsMatch[1],
+							transaction: receivedSecsMatch[2],
+							rawLine: line,
+							lineNumber: Math.floor(start / 100) + lineIdx + 1,
+						});
+					}
+
+					// Match format: -> Send SECS message: S5F1 - Transaction: 60500 <L[3] ...>
+					const sentSecsMatch = line.match(
+						/-> Send SECS message: (S\d+F\d+) - Transaction: (\d+)/
+					);
+					if (sentSecsMatch) {
+						const timestamp =
+							line.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+						const messageType = sentSecsMatch[1];
+
+						// Extract alarm ID from S5F1 messages: <U4 210355>
+						let alarmId = null;
+						if (messageType === "S5F1") {
+							const alarmMatch = line.match(/<U4 (\d+)>/);
+							if (alarmMatch) {
+								alarmId = alarmMatch[1];
+							}
+						}
+
+						messages.push({
+							timestamp,
+							direction: "sent",
+							messageType,
+							transaction: sentSecsMatch[2],
+							alarmId,
 							rawLine: line,
 							lineNumber: Math.floor(start / 100) + lineIdx + 1,
 						});
@@ -605,15 +696,15 @@ const ParserTab = ({ parserState, setParserState }) => {
 			// Process any remaining leftover
 			if (leftover) {
 				// Match format: <- Link (Passive): 3 - Message Received: DataMessage - S1F3
-				const receivedMatch = leftover.match(
+				const receivedLinkMatch = leftover.match(
 					/<- Link \([^)]+\): (\d+) - Message Received: DataMessage - S(\d+)F(\d+)/
 				);
-				if (receivedMatch) {
+				if (receivedLinkMatch) {
 					const timestamp =
 						leftover.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-					const transaction = receivedMatch[1];
-					const stream = receivedMatch[2];
-					const function_ = receivedMatch[3];
+					const transaction = receivedLinkMatch[1];
+					const stream = receivedLinkMatch[2];
+					const function_ = receivedLinkMatch[3];
 					messages.push({
 						timestamp,
 						direction: "received",
@@ -625,21 +716,66 @@ const ParserTab = ({ parserState, setParserState }) => {
 				}
 
 				// Match format: -> Link (Passive): 3 - Message Enqueued: DataMessage - S1F4
-				const sentMatch = leftover.match(
+				const sentLinkMatch = leftover.match(
 					/-> Link \([^)]+\): (\d+) - Message Enqueued: DataMessage - S(\d+)F(\d+)/
 				);
-				if (sentMatch) {
+				if (sentLinkMatch) {
 					const timestamp =
 						leftover.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
-					const transaction = sentMatch[1];
-					const stream = sentMatch[2];
-					const function_ = sentMatch[3];
+					const transaction = sentLinkMatch[1];
+					const stream = sentLinkMatch[2];
+					const function_ = sentLinkMatch[3];
 					messages.push({
 						timestamp,
 						direction: "sent",
 						messageType: `S${stream}F${function_}`,
 						transaction: transaction,
-						data: "",
+						rawLine: leftover,
+						lineNumber: totalChunks + 1,
+					});
+				}
+
+				// Match format: <- Received SECS message: S5F2 - Transaction: 60500
+				const receivedSecsMatch = leftover.match(
+					/<- Received SECS message: (S\d+F\d+) - Transaction: (\d+)/
+				);
+				if (receivedSecsMatch) {
+					const timestamp =
+						leftover.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+					messages.push({
+						timestamp,
+						direction: "received",
+						messageType: receivedSecsMatch[1],
+						transaction: receivedSecsMatch[2],
+						rawLine: leftover,
+						lineNumber: totalChunks + 1,
+					});
+				}
+
+				// Match format: -> Send SECS message: S5F1 - Transaction: 60500
+				const sentSecsMatch = leftover.match(
+					/-> Send SECS message: (S\d+F\d+) - Transaction: (\d+)/
+				);
+				if (sentSecsMatch) {
+					const timestamp =
+						leftover.match(/^(\d{1,2}:\d{2}:\d{2}\.\d{3})/)?.[1] || "";
+					const messageType = sentSecsMatch[1];
+
+					// Extract alarm ID from S5F1 messages: <U4 210355>
+					let alarmId = null;
+					if (messageType === "S5F1") {
+						const alarmMatch = leftover.match(/<U4 (\d+)>/);
+						if (alarmMatch) {
+							alarmId = alarmMatch[1];
+						}
+					}
+
+					messages.push({
+						timestamp,
+						direction: "sent",
+						messageType,
+						transaction: sentSecsMatch[2],
+						alarmId,
 						rawLine: leftover,
 						lineNumber: totalChunks + 1,
 					});
@@ -684,7 +820,7 @@ const ParserTab = ({ parserState, setParserState }) => {
 			!searchTerm ||
 			msg.messageType.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			msg.transaction?.includes(searchTerm) ||
-			msg.data?.toLowerCase().includes(searchTerm.toLowerCase());
+			msg.rawLine?.toLowerCase().includes(searchTerm.toLowerCase());
 		return matchesFilter && matchesSearch;
 	});
 
@@ -694,6 +830,9 @@ const ParserTab = ({ parserState, setParserState }) => {
 			"Direction",
 			"Message Type",
 			"Transaction",
+			"Alarm ID",
+			"Alarm Description",
+			"Alarm Severity",
 			"Line Number",
 			"Raw Log Line",
 		];
@@ -708,14 +847,20 @@ const ParserTab = ({ parserState, setParserState }) => {
 			return str;
 		};
 
-		const rows = filteredMessages.map((msg) => [
-			escapeCSV(msg.timestamp),
-			escapeCSV(msg.direction),
-			escapeCSV(msg.messageType),
-			escapeCSV(msg.transaction || ""),
-			escapeCSV(msg.lineNumber),
-			escapeCSV(msg.rawLine || ""),
-		]);
+		const rows = filteredMessages.map((msg) => {
+			const alarm = msg.alarmId ? alarms[msg.alarmId] : null;
+			return [
+				escapeCSV(msg.timestamp),
+				escapeCSV(msg.direction),
+				escapeCSV(msg.messageType),
+				escapeCSV(msg.transaction || ""),
+				escapeCSV(msg.alarmId || ""),
+				escapeCSV(alarm ? alarm.description : ""),
+				escapeCSV(alarm ? alarm.alarmCode : ""),
+				escapeCSV(msg.lineNumber),
+				escapeCSV(msg.rawLine || ""),
+			];
+		});
 
 		const csv = [headers, ...rows].map((row) => row.join(",")).join("\n");
 		const blob = new Blob([csv], { type: "text/csv" });
@@ -723,6 +868,101 @@ const ParserTab = ({ parserState, setParserState }) => {
 		const a = document.createElement("a");
 		a.href = url;
 		a.download = "secs-messages.csv";
+		a.click();
+	};
+
+	const exportToHTML = () => {
+		const escapeHTML = (str) => {
+			if (str == null) return "";
+			return String(str)
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&#039;");
+		};
+
+		const rows = filteredMessages
+			.map((msg, idx) => {
+				const rowColor = idx % 2 === 0 ? "#e2e8f0" : "#dbeafe"; // light grey and light blue
+				const borderColor =
+					msg.direction === "received" ? "#22c55e" : "#3b82f6";
+				const alarm = msg.alarmId ? alarms[msg.alarmId] : null;
+
+				return `
+			<tr style="background-color: ${rowColor};">
+				<td style="padding: 8px; border-left: 4px solid ${borderColor}; white-space: nowrap;">${escapeHTML(
+					msg.timestamp
+				)}</td>
+				<td style="padding: 8px; white-space: nowrap;">${escapeHTML(msg.direction)}</td>
+				<td style="padding: 8px; font-weight: bold; white-space: nowrap;">${escapeHTML(
+					msg.messageType
+				)}</td>
+				<td style="padding: 8px; white-space: nowrap;">${escapeHTML(
+					msg.transaction || ""
+				)}</td>
+				<td style="padding: 8px; white-space: nowrap;">${escapeHTML(
+					msg.alarmId || ""
+				)}</td>
+				<td style="padding: 8px; white-space: nowrap;">${
+					alarm ? escapeHTML(alarm.description) : ""
+				}</td>
+				<td style="padding: 8px; white-space: nowrap;">${
+					alarm ? escapeHTML(alarm.alarmCode) : ""
+				}</td>
+				<td style="padding: 8px; white-space: nowrap;">${escapeHTML(
+					msg.lineNumber
+				)}</td>
+				<td style="padding: 8px; font-family: monospace; font-size: 11px;">${escapeHTML(
+					msg.rawLine || ""
+				)}</td>
+			</tr>`;
+			})
+			.join("");
+
+		const html = `
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>SECS Messages Export</title>
+	<style>
+		body { font-family: Arial, sans-serif; margin: 20px; }
+		table { border-collapse: collapse; width: 100%; }
+		th { background-color: #1e293b; color: white; padding: 12px 8px; text-align: left; position: sticky; top: 0; }
+		td { border-bottom: 1px solid #cbd5e1; }
+		tr:hover { background-color: #fef3c7 !important; }
+	</style>
+</head>
+<body>
+	<h1>SECS/GEM Messages Export</h1>
+	<p>Total Messages: ${filteredMessages.length}</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Timestamp</th>
+				<th>Direction</th>
+				<th>Message Type</th>
+				<th>Transaction</th>
+				<th>Alarm ID</th>
+				<th>Alarm Description</th>
+				<th>Alarm Severity</th>
+				<th>Line Number</th>
+				<th>Raw Log Line</th>
+			</tr>
+		</thead>
+		<tbody>
+			${rows}
+		</tbody>
+	</table>
+</body>
+</html>`;
+
+		const blob = new Blob([html], { type: "text/html" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = "secs-messages.html";
 		a.click();
 	};
 
@@ -797,6 +1037,12 @@ const ParserTab = ({ parserState, setParserState }) => {
 								className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all">
 								<Download className="w-5 h-5" />
 								Export CSV
+							</button>
+							<button
+								onClick={exportToHTML}
+								className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all">
+								<Download className="w-5 h-5" />
+								Export HTML
 							</button>
 							<button
 								onClick={() => {
@@ -914,13 +1160,19 @@ const ParserTab = ({ parserState, setParserState }) => {
 						All Messages ({filteredMessages.length})
 					</h2>
 
-					<div className="space-y-2 max-h-[500px] overflow-y-auto">
+					<div className="space-y-0 max-h-[500px] overflow-y-auto">
 						{filteredMessages.slice(0, displayLimit).map((msg, idx) => {
 							const msgInfo = MESSAGE_INFO[msg.messageType] || {};
-							const bgColor =
+							const alarm = msg.alarmId ? alarms[msg.alarmId] : null;
+
+							// Alternating row background colors
+							const rowBgColor =
+								idx % 2 === 0 ? "bg-slate-800/40" : "bg-blue-900/20";
+
+							const borderColor =
 								msg.direction === "received"
-									? "bg-green-900/20 border-green-500"
-									: "bg-blue-900/20 border-blue-500";
+									? "border-green-500"
+									: "border-blue-500";
 							const textColor =
 								msg.direction === "received"
 									? "text-green-300"
@@ -929,7 +1181,7 @@ const ParserTab = ({ parserState, setParserState }) => {
 							return (
 								<div
 									key={idx}
-									className={`${bgColor} border-l-4 rounded-lg p-3`}>
+									className={`${rowBgColor} ${borderColor} border-l-4 p-3`}>
 									<div className="flex items-center gap-3 mb-2">
 										<span className="text-xl">
 											{msg.direction === "received" ? "⬇️" : "⬆️"}
@@ -943,10 +1195,34 @@ const ParserTab = ({ parserState, setParserState }) => {
 												<span className="text-xs text-slate-400">
 													{msgInfo.name}
 												</span>
+												{alarm && (
+													<span className="text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded border border-red-500/50">
+														🚨 Alarm ID: {msg.alarmId}
+													</span>
+												)}
 											</div>
 											<div className="text-xs text-slate-400 mt-1">
 												{msgInfo.desc}
 											</div>
+											{alarm && (
+												<div className="text-xs mt-2 bg-red-900/20 border border-red-500/30 rounded p-2">
+													<div className="text-red-300 font-semibold">
+														{alarm.description}
+													</div>
+													<div className="text-slate-400 mt-1">
+														<span className="font-mono">
+															Subsystem:
+														</span>{" "}
+														{alarm.subsystem}
+													</div>
+													<div className="text-slate-400">
+														<span className="font-mono">
+															Severity:
+														</span>{" "}
+														{alarm.alarmCode}
+													</div>
+												</div>
+											)}
 										</div>
 										<div className="text-xs text-slate-400">
 											<Clock className="w-3 h-3 inline mr-1" />
