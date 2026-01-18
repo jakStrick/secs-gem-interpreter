@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "exportedAt": "2026-01-18T15:33:34.424Z",
+  "patterns": [
+    {
+      "id": "pattern_1768750404390",
+      "name": "Log Format 1",
+      "trainedAt": "2026-01-18T15:33:24.390Z",
+      "elements": [
+        {
+          "name": "Colon-Separated Hex",
+          "type": "hex-colon",
+          "count": 424145,
+          "examples": ["00:00:01", "00:00:06", "00:00:08"],
+          "enabled": true
+        },
+        {
+          "name": "Timestamp (HH:MM:SS.mmm)",
+          "type": "timestamp",
+          "count": 424145,
+          "examples": [
+            "00:00:01.711",
+            "00:00:01.711",
+            "00:00:06.065",
+            "00:00:06.065"
+          ],
+          "enabled": true
+        },
+        {
+          "name": "Direction Indicator",
+          "type": "direction",
+          "count": 73750,
+          "examples": ["->", "<-", "<-"],
+          "enabled": true
+        },
+        {
+          "name": "SECS Message ID",
+          "type": "secs-msg-id",
+          "count": 42732,
+          "examples": ["S1F1", "S1F1", "S1F1"],
+          "enabled": true
+        },
+        {
+          "name": "Transaction ID",
+          "type": "transaction",
+          "count": 3068,
+          "examples": [
+            "Transaction: 126984",
+            "Transaction: 126984",
+            "Transaction: 126984",
+            "Transaction: 126984"
+          ],
+          "enabled": true
+        },
+        {
+          "name": "Continuous Hex String",
+          "type": "hex-continuous",
+          "count": 48542,
+          "examples": ["1FE866B5", "DEE9147E5660", "72F0FF6B", "53EBD650C44F"],
+          "enabled": true
+        },
+        {
+          "name": "0x-Prefixed Hex",
+          "type": "hex-0x",
+          "count": 138,
+          "examples": ["0x20", "0x20", "0x20", "0x20"],
+          "enabled": true
+        }
+      ],
+      "sampleLines": [
+        "00:00:01.711 | SYS |     0 | G |    Info | EVG LoggingService.DataRetention                                       |                                                              |     0 | Execute data retention ...\r",
+        "00:00:06.065 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.0                                    |  8076 | [Telemetry           ] 'Available Memory' has changed to 3574 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":3574}}\r",
+        "00:00:08.090 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.2                                    |  7004 | [Telemetry           ] 'Available Memory' has changed to 3447 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":3447}}\r",
+        "00:00:10.121 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.4                                    | 10652 | [Telemetry           ] 'Available Memory' has changed to 3394 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":3394}}\r",
+        "00:00:11.141 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.3                                    | 10668 | [Telemetry           ] 'Available Memory' has changed to 3200 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":3200}}\r",
+        "00:00:11.256 | CIM |  9068 | G |    Info | Automation.Integrated                                                  | HSMSConnectionWorkerThread                                   |  4112 | [Automation          ] -> Link (Passive): 2 - Message Enqueued: LinktestReq | {\"MessageTemplate\":\"-> Link ({0}): {1} - Message Enqueued: {2}\",\"Properties\":{\"0\":\"Passive\",\"1\":2,\"2\":\"LinktestReq\"}}\r",
+        "00:00:11.262 | CIM |  9068 | G |    Info | Automation.Integrated                                                  | HSMSConnectionWorkerThread                                   |  4112 | [Automation          ] <- Link (Passive): 2 - Message Received: LinktestRsp | {\"MessageTemplate\":\"<- Link ({0}): {1} - Message Received: {2}\",\"Properties\":{\"0\":\"Passive\",\"1\":2,\"2\":\"LinktestRsp\"}}\r",
+        "00:00:13.167 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.4                                    | 10652 | [Telemetry           ] 'Available Memory' has changed to 3141 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":3141}}\r",
+        "00:00:15.190 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.3                                    | 10668 | [Telemetry           ] 'Available Memory' has changed to 2934 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":2934}}\r",
+        "00:00:16.217 | CIM |  9068 | G |   Debug | OperatingSystem.OSService                                              | TaskingService.Executor.2                                    |  7004 | [Telemetry           ] 'Available Memory' has changed to 2697 | {\"MessageTemplate\":\"'{MonitorName:l}' has changed to {Value}\",\"Properties\":{\"MonitorName\":\"Available Memory\",\"Value\":2697}}\r"
+      ]
+    }
+  ]
+}
