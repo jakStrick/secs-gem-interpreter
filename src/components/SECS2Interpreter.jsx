@@ -202,36 +202,6 @@ const parseSecsNotation = (notation) => {
   }
 };
 
-// Format parsed SECS notation for display
-const formatParsedNotation = (item, indent = 0) => {
-  if (!item) return "";
-  const spaces = "  ".repeat(indent);
-
-  if (item.type === "List") {
-    let result = `${spaces}<List[${item.length}]>\n`;
-    if (item.items) {
-      item.items.forEach((subItem, idx) => {
-        result += `${spaces}  [${idx}] ${formatParsedNotation(subItem, indent + 1)}`;
-      });
-    }
-    return result;
-  }
-
-  if (item.type === "ASCII") {
-    return `<ASCII> "${item.value}"\n`;
-  }
-
-  if (item.type === "Binary") {
-    return `<Binary> ${item.value}\n`;
-  }
-
-  if (item.type === "Boolean") {
-    return `<Boolean> ${item.value ? "T" : "F"}\n`;
-  }
-
-  return `<${item.type}> ${item.value}\n`;
-};
-
 // ==================== MAIN APP ====================
 const SECS2InterpreterApp = () => {
   const [activeTab, setActiveTab] = useState("parser");
@@ -2566,6 +2536,7 @@ const FullArchitectureTab = () => {
           ["patterns", "Design Patterns"],
           ["appendix", "Appendix: Messages"],
           ["semidocs", "SEMI Documents"],
+          ["printable", "Printable Version"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -3246,6 +3217,774 @@ const FullArchitectureTab = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {tab === "printable" && (
+        <iframe
+          srcDoc={`<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @media print {
+    .no-print { display: none; }
+    body { margin: 0; }
+    .page-break { page-break-before: always; }
+    .avoid-break { page-break-inside: avoid; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .print-btn { position: fixed; top: 16px; right: 16px; background: #1e3a6e; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; z-index: 999; }
+  .print-btn:hover { background: #2a52a0; }
+  .cover { text-align: center; padding: 40px 0 32px; border-bottom: 3px solid #1e3a6e; margin-bottom: 32px; }
+  .cover h1 { font-size: 26px; color: #0f2035; letter-spacing: 1px; margin-bottom: 6px; }
+  .cover .subtitle { font-size: 12px; color: #64748b; margin-bottom: 4px; }
+  .cover .date { font-size: 11px; color: #94a3b8; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f2035; border-bottom: 2px solid #1e3a6e; padding-bottom: 6px; margin: 28px 0 14px; letter-spacing: 0.5px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: #475569; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; }
+  .layer { border-radius: 8px; border: 1.5px solid; padding: 12px 14px; margin-bottom: 14px; }
+  .layer-header { margin-bottom: 10px; }
+  .layer-num { font-size: 9px; font-weight: 800; letter-spacing: 1.5px; }
+  .layer-name { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .layer-desc { font-size: 10px; color: #64748b; font-style: italic; margin-top: 2px; }
+  .nodes { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .node-card { border: 1.5px solid; border-radius: 6px; padding: 8px 10px; flex: 0 0 auto; }
+  .node-label { font-size: 10px; font-family: monospace; font-weight: 700; white-space: pre-line; line-height: 1.4; margin-bottom: 5px; }
+  .node-note { font-size: 9px; font-family: monospace; color: #334155; line-height: 1.6; border-top: 1px solid #e2e8f0; padding-top: 5px; white-space: pre; }
+  .am-pub  { color: #16a34a; }
+  .am-priv { color: #dc2626; }
+  .am-prot { color: #d97706; }
+  .am-int  { color: #7c3aed; }
+  .flow-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .flow-table th { background: #0f2035; color: #fff; padding: 7px 10px; font-size: 10px; text-align: left; }
+  .flow-table td { padding: 6px 10px; font-size: 10px; border-bottom: 1px solid #e2e8f0; font-family: monospace; }
+  .flow-table tr:nth-child(even) td { background: #f8fafc; }
+  .dir-out { color: #1e40af; font-weight: 700; }
+  .dir-in  { color: #166534; font-weight: 700; }
+  .seq-step { display: grid; grid-template-columns: 26px 180px 1fr; gap: 0 10px; align-items: start; margin-bottom: 8px; }
+  .seq-num { background: #0f2035; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+  .seq-title { font-size: 10px; font-family: monospace; font-weight: 700; color: #1e40af; }
+  .seq-desc  { font-size: 10px; color: #475569; }
+  .pattern-row { display: grid; grid-template-columns: 150px 1fr; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 9px 12px; margin-bottom: 8px; }
+  .pattern-name { font-size: 10px; font-family: monospace; font-weight: 700; color: #7c3aed; }
+  .pattern-used { font-size: 10px; color: #475569; line-height: 1.6; white-space: pre-wrap; }
+  .iface-block { margin-bottom: 10px; background: #f8fafc; border: 1px solid #bfdbfe; border-left: 3px solid #1e40af; border-radius: 6px; padding: 9px 12px; }
+  .iface-name { font-size: 10px; font-family: monospace; font-weight: 700; color: #1e40af; margin-bottom: 5px; }
+  .iface-sigs { font-size: 9px; font-family: monospace; color: #166534; line-height: 1.7; white-space: pre-wrap; }
+  .semi-doc { border-radius: 6px; border: 1px solid; border-left: 3px solid; padding: 10px 14px; margin-bottom: 10px; }
+  .semi-doc-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .semi-why { font-size: 10px; color: #475569; line-height: 1.6; margin-bottom: 6px; }
+  .semi-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .semi-tag { background: #eff6ff; color: #1e40af; font-size: 8px; font-family: monospace; padding: 2px 6px; border-radius: 3px; border: 1px solid #bfdbfe; }
+  .stream-block { margin-bottom: 12px; }
+  .stream-header { background: #0f2035; color: #93c5fd; font-family: monospace; font-weight: 700; font-size: 11px; padding: 5px 10px; border-radius: 5px 5px 0 0; }
+  .stream-msgs { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 5px 5px; }
+  .stream-msg { font-size: 10px; font-family: monospace; color: #334155; padding: 4px 10px; border-bottom: 1px solid #f1f5f9; }
+  .stream-msg:last-child { border-bottom: none; }
+  .stream-msg:nth-child(even) { background: #f8fafc; }
+  h2.sub { font-size: 12px; font-weight: 700; color: #0f2035; margin: 18px 0 10px; border-left: 3px solid #1e40af; padding-left: 8px; }
+  .am-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 10px; font-family: monospace; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print / Save PDF</button>
+
+<div class="cover avoid-break">
+  <h1>SECS/GEM300 FULL ARCHITECTURE</h1>
+  <div class="subtitle">SEMI E5 · E30 · E37 · E40 · E84 · E87 · E90 · E94 · E116</div>
+  <div class="subtitle">ISO 9000 High-Volume Manufacturing — Complete Implementation Reference</div>
+  <div class="date">Generated: <script>document.write(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}))</script></div>
+</div>
+
+<div class="avoid-break">
+  <div class="section-title">TABLE OF CONTENTS</div>
+  <table style="width:100%;border-collapse:collapse;">
+    <tr><td style="padding:4px 0;font-size:11px;width:30px;">1.</td><td style="padding:4px 0;font-size:11px;">Architecture — Layer Overview</td></tr>
+    <tr><td style="padding:4px 0;font-size:11px;">2.</td><td style="padding:4px 0;font-size:11px;">Message Flow & CE/Report Sequence</td></tr>
+    <tr><td style="padding:4px 0;font-size:11px;">3.</td><td style="padding:4px 0;font-size:11px;">Design Patterns & Interface Contracts</td></tr>
+    <tr><td style="padding:4px 0;font-size:11px;">4.</td><td style="padding:4px 0;font-size:11px;">SEMI Documents — Reading Order</td></tr>
+    <tr><td style="padding:4px 0;font-size:11px;">5.</td><td style="padding:4px 0;font-size:11px;">Appendix — Complete SECS-II Message Catalog</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 1 -->
+<div class="page-break">
+  <div class="section-title">1. ARCHITECTURE — LAYER OVERVIEW</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#e8f4fd;border-color:#1e40af;"></div>Interface</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f0fdf4;border-color:#16a34a;"></div>Concrete Class</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#faf5ff;border-color:#7c3aed;"></div>Factory</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#fff7ed;border-color:#ea580c;"></div>State Machine</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#fefce8;border-color:#ca8a04;"></div>Data Model</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f8fafc;border-color:#64748b;"></div>Infrastructure</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#eef2ff;border-color:#4f46e5;"></div>External</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#fef2f2;border-color:#dc2626;"></div>Protocol</div>
+  </div>
+  <div class="am-legend">
+    <span><span class="am-pub">public</span> — accessible from any layer</span>
+    <span><span class="am-priv">private</span> — internal to class only</span>
+    <span><span class="am-prot">protected</span> — accessible by class + subclasses</span>
+    <span><span class="am-int">internal</span> — accessible within assembly only</span>
+  </div>
+
+  <div id="arch-layers"></div>
+  <script>
+    function am(modifier, text) {
+      const cls = modifier === 'public' ? 'am-pub' : modifier === 'private' ? 'am-priv' : modifier === 'protected' ? 'am-prot' : 'am-int';
+      return '<span class="' + cls + '">' + modifier + '</span> ' + text;
+    }
+
+    const layers = [
+      { num:0, label:"HOST / MES LAYER", border:"#1e40af", bg:"#f0f6ff",
+        desc:"ISO 9000 High-Volume Manufacturing Facility (HSMS TCP/IP)",
+        nodes:[
+          { label:"MES / Host System", type:"external",
+            note:"External system — no interface defined here.\\nThis is the remote host the tool communicates with." },
+          { label:"HSMS Protocol Stack", type:"proto",
+            note:"TCP/IP · Port 5000 · Active or Passive mode · E37 compliant" },
+        ]
+      },
+      { num:1, label:"TRANSPORT / COMMUNICATION LAYER", border:"#0891b2", bg:"#f0fdfa",
+        desc:"SEMI E37 HSMS — Connection Management, Session, Framing",
+        nodes:[
+          { label:"«interface»\\nIHsmsConnection", type:"interface", note:[
+            am('public','Task ConnectAsync(string ip, int port, CancellationToken ct)'),
+            am('public','Task DisconnectAsync(CancellationToken ct)'),
+            am('public','bool IsConnected { get; }'),
+            am('public','Task SendAsync(HsmsMessage msg, CancellationToken ct)'),
+            am('public','event EventHandler<HsmsMessage> MessageReceived'),
+            am('public','event EventHandler<ConnectionStateChangedArgs> ConnectionStateChanged'),
+          ].join('\\n')},
+          { label:"HsmsConnection", type:"class", note:[
+            am('public','Task ConnectAsync(string ip, int port, CancellationToken ct)'),
+            am('public','Task DisconnectAsync(CancellationToken ct)'),
+            am('public','bool IsConnected { get; }'),
+            am('public','Task SendAsync(HsmsMessage msg, CancellationToken ct)'),
+            am('public','event EventHandler<HsmsMessage> MessageReceived'),
+            am('public','event EventHandler<ConnectionStateChangedArgs> ConnectionStateChanged'),
+            am('private','Task ReceiveLoopAsync(CancellationToken ct)'),
+            am('private','TcpClient _client'),
+            am('private','NetworkStream _stream'),
+          ].join('\\n')},
+          { label:"HsmsSessionManager", type:"class", note:[
+            am('public','Task SelectAsync()'),
+            am('public','Task DeSelectAsync()'),
+            am('public','Task SeparateAsync()'),
+            am('public','Task SendLinktestAsync()'),
+            am('private','void StartHeartbeat()'),
+            am('private','Task ReconnectAsync()'),
+            am('private','IHsmsConnection _connection'),
+          ].join('\\n')},
+          { label:"HsmsMessageFramer", type:"class", note:[
+            am('public','byte[] Encode(HsmsMessage msg)'),
+            am('public','HsmsMessage Decode(byte[] data)'),
+            am('public','uint GenerateSystemBytes()'),
+            am('private','byte[] BuildHeader(HsmsMessage msg)'),
+            am('private','void ValidateLength(byte[] data)'),
+          ].join('\\n')},
+          { label:"«interface»\\nIConnectionObserver", type:"interface", note:[
+            am('public','void OnConnected()'),
+            am('public','void OnDisconnected()'),
+            am('public','void OnMessageReceived(HsmsMessage msg)'),
+          ].join('\\n')},
+        ]
+      },
+      { num:2, label:"SECS-II ENCODE / DECODE LAYER", border:"#16a34a", bg:"#f0fdf4",
+        desc:"SEMI E5 — Message Encoding, Item Trees, Data Types",
+        nodes:[
+          { label:"«interface»\\nISecsMessage", type:"interface", note:[
+            am('public','byte Stream { get; }'),
+            am('public','byte Function { get; }'),
+            am('public','bool ReplyBit { get; }'),
+            am('public','uint SystemBytes { get; }'),
+            am('public','ISecsItem Root { get; }'),
+            am('public','byte[] Encode()'),
+          ].join('\\n')},
+          { label:"SecsMessage", type:"class", note:[
+            am('public','byte Stream { get; }'),
+            am('public','byte Function { get; }'),
+            am('public','bool ReplyBit { get; }'),
+            am('public','uint SystemBytes { get; }'),
+            am('public','ISecsItem Root { get; }'),
+            am('public','byte[] Encode()'),
+            am('public static','SecsMessage Create(byte stream, byte func, ISecsItem root)'),
+            am('private','void ValidateStreamFunction()'),
+          ].join('\\n')},
+          { label:"«interface»\\nISecsItem", type:"interface", note:[
+            am('public','SecsItemType ItemType { get; }'),
+            am('public','object Value { get; }'),
+            am('public','List<ISecsItem> Children { get; }'),
+            am('public','byte[] Encode()'),
+            am('public static','ISecsItem Decode(byte[] data)'),
+          ].join('\\n')},
+          { label:"SecsItemFactory", type:"factory", note:[
+            am('public','ISecsItem Create(SecsItemType type, object value)'),
+            am('public','ISecsItem CreateList(IEnumerable<ISecsItem> items)'),
+            am('public','ISecsItem CreateAscii(string value)'),
+            am('public','ISecsItem CreateU4(uint value)'),
+            am('public','ISecsItem CreateBool(bool value)'),
+            am('private','ISecsItem BuildItem(SecsItemType type, object value)'),
+          ].join('\\n')},
+          { label:"SecsEncoder", type:"class", note:[
+            am('public','byte[] Encode(ISecsMessage msg)'),
+            am('private','byte[] EncodeItem(ISecsItem item)'),
+            am('private','byte[] EncodeHeader(ISecsMessage msg)'),
+            am('private','byte[] EncodeLength(int length)'),
+          ].join('\\n')},
+          { label:"SecsDecoder", type:"class", note:[
+            am('public','ISecsMessage Decode(byte[] data)'),
+            am('private','ISecsItem DecodeItem(byte[] data, ref int offset)'),
+            am('private','SecsItemType ParseFormatCode(byte b)'),
+            am('private','int ParseLength(byte[] data, ref int offset)'),
+          ].join('\\n')},
+          { label:"MessageRouter", type:"class", note:[
+            am('public','void Register(byte stream, byte func, IMessageHandler handler)'),
+            am('public','void Unregister(byte stream, byte func)'),
+            am('public','void Route(ISecsMessage msg)'),
+            am('private','Dictionary<(byte,byte), IMessageHandler> _handlers'),
+            am('private','IMessageLogger _logger'),
+          ].join('\\n')},
+        ]
+      },
+      { num:3, label:"GEM CORE LAYER (E30)", border:"#7c3aed", bg:"#faf5ff",
+        desc:"SEMI E30 — State Machines, Variables, Events, Alarms, Remote Commands",
+        nodes:[
+          { label:"«interface»\\nIGemKernel", type:"interface", note:[
+            am('public','void Start()'),
+            am('public','void Stop()'),
+            am('public','void ProcessIncomingMessage(ISecsMessage msg)'),
+            am('public','GemState GetCommunicationState()'),
+            am('public','GemState GetControlState()'),
+            am('public','Task SendAsync(ISecsMessage msg)'),
+          ].join('\\n')},
+          { label:"GemKernel", type:"class", note:[
+            am('public','void Start()'),
+            am('public','void Stop()'),
+            am('public','void ProcessIncomingMessage(ISecsMessage msg)'),
+            am('public','GemState GetCommunicationState()'),
+            am('public','GemState GetControlState()'),
+            am('public','Task SendAsync(ISecsMessage msg)'),
+            am('private','void WireSubsystems()'),
+            am('private','void OnConnectionStateChanged(object s, ConnectionStateChangedArgs e)'),
+            am('private','readonly IHsmsConnection _connection'),
+            am('private','readonly ICommunicationStateMachine _commSm'),
+            am('private','readonly IControlStateMachine _ctrlSm'),
+          ].join('\\n')},
+          { label:"«interface»\\nICommunicationStateMachine", type:"interface", note:[
+            am('public','string CurrentStateName { get; }'),
+            am('public','void Connect()'),
+            am('public','void Disconnect()'),
+            am('public','void OnSelectReq()'),
+            am('public','void OnSeparateReq()'),
+            am('public','event EventHandler<string> StateChanged'),
+          ].join('\\n')},
+          { label:"CommunicationStateMachine", type:"state", note:[
+            am('public','string CurrentStateName { get; }'),
+            am('public','void Connect()'),
+            am('public','void Disconnect()'),
+            am('public','void OnSelectReq()'),
+            am('public','void OnSeparateReq()'),
+            am('public','event EventHandler<string> StateChanged'),
+            am('internal','void TransitionTo(CommunicationState state)'),
+            am('private','CommunicationState _currentState'),
+          ].join('\\n')},
+          { label:"«interface»\\nIControlStateMachine", type:"interface", note:[
+            am('public','string CurrentStateName { get; }'),
+            am('public','void GoLocal()'),
+            am('public','void GoRemote()'),
+            am('public','void GoOffline()'),
+            am('public','void GoOnline()'),
+            am('public','event EventHandler<string> StateChanged'),
+          ].join('\\n')},
+          { label:"ControlStateMachine", type:"state", note:[
+            am('public','string CurrentStateName { get; }'),
+            am('public','void GoLocal()'),
+            am('public','void GoRemote()'),
+            am('public','void GoOffline()'),
+            am('public','void GoOnline()'),
+            am('public','event EventHandler<string> StateChanged'),
+            am('internal','void TransitionTo(ControlState state)'),
+            am('private','ControlState _currentState'),
+          ].join('\\n')},
+          { label:"«interface»\\nISpoolingManager", type:"interface", note:[
+            am('public','void Spool(ISecsMessage msg)'),
+            am('public','IEnumerable<ISecsMessage> Unspool()'),
+            am('public','void Purge()'),
+            am('public','int SpoolCount { get; }'),
+            am('public','bool IsSpoolingActive { get; }'),
+          ].join('\\n')},
+          { label:"SpoolingManager", type:"class", note:[
+            am('public','void Spool(ISecsMessage msg)'),
+            am('public','IEnumerable<ISecsMessage> Unspool()'),
+            am('public','void Purge()'),
+            am('public','int SpoolCount { get; }'),
+            am('public','bool IsSpoolingActive { get; }'),
+            am('private','Queue<ISecsMessage> _spoolQueue'),
+            am('private','object _lock'),
+          ].join('\\n')},
+        ]
+      },
+      { num:4, label:"GEM300 LAYER (E40 · E87 · E90 · E94 · E116)", border:"#ea580c", bg:"#fff7ed",
+        desc:"300mm Extensions — Process Jobs, Carrier, Substrate, Control Jobs, EPT",
+        nodes:[
+          { label:"«interface»\\nIProcessJobManager", type:"interface", note:[
+            am('public','AckCode CreateJob(PRJobSpec spec)'),
+            am('public','AckCode StartJob(string jobId)'),
+            am('public','AckCode PauseJob(string jobId)'),
+            am('public','AckCode ResumeJob(string jobId)'),
+            am('public','AckCode AbortJob(string jobId, AbortType type)'),
+            am('public','PRJobState GetJobState(string jobId)'),
+          ].join('\\n')},
+          { label:"ProcessJobManager", type:"class", note:[
+            am('public','AckCode CreateJob(PRJobSpec spec)'),
+            am('public','AckCode StartJob(string jobId)'),
+            am('public','AckCode PauseJob(string jobId)'),
+            am('public','AckCode ResumeJob(string jobId)'),
+            am('public','AckCode AbortJob(string jobId, AbortType type)'),
+            am('public','PRJobState GetJobState(string jobId)'),
+            am('private','void OnS16F11(ISecsMessage msg)'),
+            am('private','void TransitionJobState(string jobId, PRJobState next)'),
+            am('private','Dictionary<string, PRJobRecord> _jobs'),
+          ].join('\\n')},
+          { label:"«interface»\\nICarrierManager", type:"interface", note:[
+            am('public','AckCode LoadCarrier(CarrierSpec spec)'),
+            am('public','AckCode UnloadCarrier(string carrierId)'),
+            am('public','AckCode BindCarrier(string carrierId, string portId)'),
+            am('public','AckCode CancelBind(string portId)'),
+            am('public','CarrierState GetCarrierState(string carrierId)'),
+          ].join('\\n')},
+          { label:"CarrierManager", type:"class", note:[
+            am('public','AckCode LoadCarrier(CarrierSpec spec)'),
+            am('public','AckCode UnloadCarrier(string carrierId)'),
+            am('public','AckCode BindCarrier(string carrierId, string portId)'),
+            am('public','AckCode CancelBind(string portId)'),
+            am('public','CarrierState GetCarrierState(string carrierId)'),
+            am('private','void OnS3F17(ISecsMessage msg)'),
+            am('private','void TransitionCasState(string carrierId, CarrierState next)'),
+            am('private','Dictionary<string, CarrierRecord> _carriers'),
+          ].join('\\n')},
+          { label:"«interface»\\nISubstrateManager", type:"interface", note:[
+            am('public','void TrackSubstrate(SubstrateSpec spec)'),
+            am('public','void UpdateLocation(string substrateId, string locationId)'),
+            am('public','SubstrateState GetState(string substrateId)'),
+            am('public','IEnumerable<SubstrateRecord> GetAll()'),
+          ].join('\\n')},
+          { label:"SubstrateManager", type:"class", note:[
+            am('public','void TrackSubstrate(SubstrateSpec spec)'),
+            am('public','void UpdateLocation(string substrateId, string locationId)'),
+            am('public','SubstrateState GetState(string substrateId)'),
+            am('public','IEnumerable<SubstrateRecord> GetAll()'),
+            am('private','void OnS14F3(ISecsMessage msg)'),
+            am('private','Dictionary<string, SubstrateRecord> _substrates'),
+          ].join('\\n')},
+          { label:"«interface»\\nIControlJobManager", type:"interface", note:[
+            am('public','AckCode CreateControlJob(ControlJobSpec spec)'),
+            am('public','AckCode StartControlJob(string cjId)'),
+            am('public','AckCode AbortControlJob(string cjId)'),
+            am('public','AckCode PauseControlJob(string cjId)'),
+            am('public','ControlJobState GetState(string cjId)'),
+          ].join('\\n')},
+          { label:"ControlJobManager", type:"class", note:[
+            am('public','AckCode CreateControlJob(ControlJobSpec spec)'),
+            am('public','AckCode StartControlJob(string cjId)'),
+            am('public','AckCode AbortControlJob(string cjId)'),
+            am('public','AckCode PauseControlJob(string cjId)'),
+            am('public','ControlJobState GetState(string cjId)'),
+            am('private','void OnS17F1(ISecsMessage msg)'),
+            am('private','void LinkToProcessJob(string cjId, string jobId)'),
+            am('private','Dictionary<string, ControlJobRecord> _controlJobs'),
+          ].join('\\n')},
+          { label:"«interface»\\nIEptManager", type:"interface", note:[
+            am('public','void UpdateEPTState(EptState state)'),
+            am('public','EptMetrics GetMetrics()'),
+            am('public','void RecordStateEntry(EptState state, DateTime timestamp)'),
+            am('public','TimeSpan GetTimeInState(EptState state)'),
+          ].join('\\n')},
+          { label:"EptManager", type:"class", note:[
+            am('public','void UpdateEPTState(EptState state)'),
+            am('public','EptMetrics GetMetrics()'),
+            am('public','void RecordStateEntry(EptState state, DateTime timestamp)'),
+            am('public','TimeSpan GetTimeInState(EptState state)'),
+            am('private','void FireEptCollectionEvent(EptState state)'),
+            am('private','Dictionary<EptState, TimeSpan> _stateAccumulator'),
+            am('private','EptState _currentState'),
+          ].join('\\n')},
+        ]
+      },
+      { num:5, label:"DATA COLLECTION LAYER — ECVs · SVs · DVs · Reports · Collection Events", border:"#16a34a", bg:"#f0fdf4",
+        desc:"E30 §7 — Variables, Report Definitions, Collection Events, CEID→RPTID→VID Linkage",
+        nodes:[
+          { label:"«interface»\\nIVariableRepository", type:"interface", note:[
+            am('public','SecsItem GetSV(uint vid)'),
+            am('public','SecsItem GetDV(uint vid)'),
+            am('public','SecsItem GetECV(uint vid)'),
+            am('public','void SetECV(uint vid, SecsItem value)'),
+            am('public','List<VariableDefinition> GetNamelist(VariableType type)'),
+          ].join('\\n')},
+          { label:"VariableRepository", type:"class", note:[
+            am('public','SecsItem GetSV(uint vid)'),
+            am('public','SecsItem GetDV(uint vid)'),
+            am('public','SecsItem GetECV(uint vid)'),
+            am('public','void SetECV(uint vid, SecsItem value)'),
+            am('public','List<VariableDefinition> GetNamelist(VariableType type)'),
+            am('private','void LoadFromConfig()'),
+            am('private','Dictionary<uint, SecsItem> _svs'),
+            am('private','Dictionary<uint, SecsItem> _dvs'),
+            am('private','Dictionary<uint, SecsItem> _ecvs'),
+          ].join('\\n')},
+          { label:"«interface»\\nIReportManager", type:"interface", note:[
+            am('public','AckCode DefineReport(uint rptId, uint[] vids)'),
+            am('public','AckCode DeleteReport(uint rptId)'),
+            am('public','AckCode LinkReport(uint ceid, uint[] rptIds)'),
+            am('public','AckCode UnlinkReport(uint ceid, uint[] rptIds)'),
+            am('public','ReportDefinition GetReport(uint rptId)'),
+          ].join('\\n')},
+          { label:"ReportManager", type:"class", note:[
+            am('public','AckCode DefineReport(uint rptId, uint[] vids)'),
+            am('public','AckCode DeleteReport(uint rptId)'),
+            am('public','AckCode LinkReport(uint ceid, uint[] rptIds)'),
+            am('public','AckCode UnlinkReport(uint ceid, uint[] rptIds)'),
+            am('public','ReportDefinition GetReport(uint rptId)'),
+            am('private','void PersistReports()'),
+            am('private','Dictionary<uint, ReportDefinition> _reports'),
+          ].join('\\n')},
+          { label:"«interface»\\nICollectionEventManager", type:"interface", note:[
+            am('public','void RegisterCE(CollectionEventDefinition ce)'),
+            am('public','void FireEvent(uint ceid)'),
+            am('public','AckCode EnableCE(uint[] ceids)'),
+            am('public','AckCode DisableCE(uint[] ceids)'),
+            am('public','List<ReportDefinition> GetLinkedReports(uint ceid)'),
+            am('public','bool IsEnabled(uint ceid)'),
+          ].join('\\n')},
+          { label:"CollectionEventManager", type:"class", note:[
+            am('public','void RegisterCE(CollectionEventDefinition ce)'),
+            am('public','void FireEvent(uint ceid)'),
+            am('public','AckCode EnableCE(uint[] ceids)'),
+            am('public','AckCode DisableCE(uint[] ceids)'),
+            am('public','List<ReportDefinition> GetLinkedReports(uint ceid)'),
+            am('public','bool IsEnabled(uint ceid)'),
+            am('private','ISecsMessage BuildS6F11(uint ceid)'),
+            am('private','Dictionary<uint, CollectionEventDefinition> _events'),
+          ].join('\\n')},
+          { label:"ReportDefinition", type:"model", note:[
+            am('public','uint RPTID { get; init; }'),
+            am('public','uint[] VIDs { get; init; }'),
+            am('public','string Name { get; init; }'),
+          ].join('\\n')},
+          { label:"CollectionEventDefinition", type:"model", note:[
+            am('public','uint CEID { get; init; }'),
+            am('public','string Name { get; init; }'),
+            am('public','List<uint> LinkedRPTIDs { get; set; }'),
+            am('public','bool Enabled { get; set; }'),
+          ].join('\\n')},
+        ]
+      },
+      { num:6, label:"ALARM & REMOTE COMMAND LAYER", border:"#7c3aed", bg:"#faf5ff",
+        desc:"E30 — Alarm Management, Remote Commands, Process Programs",
+        nodes:[
+          { label:"«interface»\\nIAlarmManager", type:"interface", note:[
+            am('public','void SetAlarm(uint alid, string text)'),
+            am('public','void ClearAlarm(uint alid)'),
+            am('public','AckCode EnableAlarm(uint alid)'),
+            am('public','AckCode DisableAlarm(uint alid)'),
+            am('public','IEnumerable<AlarmRecord> GetAlarms()'),
+            am('public','bool IsEnabled(uint alid)'),
+          ].join('\\n')},
+          { label:"AlarmManager", type:"class", note:[
+            am('public','void SetAlarm(uint alid, string text)'),
+            am('public','void ClearAlarm(uint alid)'),
+            am('public','AckCode EnableAlarm(uint alid)'),
+            am('public','AckCode DisableAlarm(uint alid)'),
+            am('public','IEnumerable<AlarmRecord> GetAlarms()'),
+            am('public','bool IsEnabled(uint alid)'),
+            am('private','void SendS5F1(uint alid, bool set, string text)'),
+            am('private','Dictionary<uint, AlarmRecord> _alarms'),
+          ].join('\\n')},
+          { label:"«interface»\\nIRemoteCommandManager", type:"interface", note:[
+            am('public','void RegisterCommand(string rcmd, Func<CpList, AckCode> handler)'),
+            am('public','AckCode ExecuteCommand(string rcmd, CpList parameters)'),
+            am('public','IEnumerable<string> GetRegisteredCommands()'),
+          ].join('\\n')},
+          { label:"RemoteCommandManager", type:"class", note:[
+            am('public','void RegisterCommand(string rcmd, Func<CpList, AckCode> handler)'),
+            am('public','AckCode ExecuteCommand(string rcmd, CpList parameters)'),
+            am('public','IEnumerable<string> GetRegisteredCommands()'),
+            am('private','void OnS2F41(ISecsMessage msg)'),
+            am('private','void SendS2F42(AckCode code)'),
+            am('private','Dictionary<string, Func<CpList,AckCode>> _commands'),
+          ].join('\\n')},
+          { label:"«interface»\\nIProcessProgramManager", type:"interface", note:[
+            am('public','AckCode UploadPP(string ppid, byte[] body)'),
+            am('public','AckCode DownloadPP(string ppid, out byte[] body)'),
+            am('public','AckCode DeletePP(string ppid)'),
+            am('public','bool ValidatePP(byte[] body)'),
+            am('public','IEnumerable<string> ListPPs()'),
+          ].join('\\n')},
+          { label:"ProcessProgramManager", type:"class", note:[
+            am('public','AckCode UploadPP(string ppid, byte[] body)'),
+            am('public','AckCode DownloadPP(string ppid, out byte[] body)'),
+            am('public','AckCode DeletePP(string ppid)'),
+            am('public','bool ValidatePP(byte[] body)'),
+            am('public','IEnumerable<string> ListPPs()'),
+            am('private','void OnS7F3(ISecsMessage msg)'),
+            am('private','Task HandleMultiBlockTransfer(ISecsMessage msg)'),
+            am('private','Dictionary<string, byte[]> _programs'),
+          ].join('\\n')},
+        ]
+      },
+      { num:7, label:"EQUIPMENT INTERFACE LAYER", border:"#0891b2", bg:"#f0fdfa",
+        desc:"Bridge to physical tool — PLC, Sensors, Actuators, Recipe Engine",
+        nodes:[
+          { label:"«interface»\\nIEquipmentAdapter", type:"interface", note:[
+            am('public','Task<EquipmentStatus> GetStatusAsync()'),
+            am('public','Task ExecuteCommandAsync(string command, object[] args)'),
+            am('public','Task<SecsItem> ReadVariableAsync(uint vid)'),
+            am('public','void Subscribe(uint vid, Action<SecsItem> onChange)'),
+            am('public','void Unsubscribe(uint vid)'),
+          ].join('\\n')},
+          { label:"TwincatEquipmentAdapter", type:"class", note:[
+            am('public','Task<EquipmentStatus> GetStatusAsync()'),
+            am('public','Task ExecuteCommandAsync(string command, object[] args)'),
+            am('public','Task<SecsItem> ReadVariableAsync(uint vid)'),
+            am('public','void Subscribe(uint vid, Action<SecsItem> onChange)'),
+            am('public','void Unsubscribe(uint vid)'),
+            am('private','void OnAdsNotification(AdsNotificationEventArgs e)'),
+            am('private','SecsItem MapAdsValueToSecsItem(object adsValue)'),
+            am('private','AdsClient _adsClient'),
+            am('private','Dictionary<uint, Action<SecsItem>> _subscriptions'),
+          ].join('\\n')},
+          { label:"«interface»\\nIRecipeEngine", type:"interface", note:[
+            am('public','AckCode LoadRecipe(string recipeId)'),
+            am('public','void StartRecipe()'),
+            am('public','void AbortRecipe()'),
+            am('public','int GetCurrentStep()'),
+            am('public','RecipeState GetState()'),
+            am('public','event EventHandler<int> StepChanged'),
+          ].join('\\n')},
+          { label:"RecipeEngine", type:"class", note:[
+            am('public','AckCode LoadRecipe(string recipeId)'),
+            am('public','void StartRecipe()'),
+            am('public','void AbortRecipe()'),
+            am('public','int GetCurrentStep()'),
+            am('public','RecipeState GetState()'),
+            am('public','event EventHandler<int> StepChanged'),
+            am('private','void AdvanceStep()'),
+            am('private','void OnStepComplete(int step)'),
+            am('private','RecipeDefinition _activeRecipe'),
+            am('private','int _currentStep'),
+          ].join('\\n')},
+          { label:"«interface»\\nIEquipmentEventBus", type:"interface", note:[
+            am('public','void Publish(EquipmentEvent evt)'),
+            am('public','void Subscribe(uint ceid, Action<EquipmentEvent> handler)'),
+            am('public','void Unsubscribe(uint ceid, Action<EquipmentEvent> handler)'),
+          ].join('\\n')},
+          { label:"EquipmentEventBus", type:"class", note:[
+            am('public','void Publish(EquipmentEvent evt)'),
+            am('public','void Subscribe(uint ceid, Action<EquipmentEvent> handler)'),
+            am('public','void Unsubscribe(uint ceid, Action<EquipmentEvent> handler)'),
+            am('private','void DispatchToSubscribers(EquipmentEvent evt)'),
+            am('private','Channel<EquipmentEvent> _channel'),
+            am('private','Dictionary<uint, List<Action<EquipmentEvent>>> _subscribers'),
+          ].join('\\n')},
+        ]
+      },
+      { num:8, label:"INFRASTRUCTURE / CROSS-CUTTING LAYER", border:"#64748b", bg:"#f8fafc",
+        desc:"Logging · DI Container · Configuration · Persistence · Error Handling",
+        nodes:[
+          { label:"«interface»\\nIMessageLogger", type:"interface", note:[
+            am('public','void LogSend(ISecsMessage msg)'),
+            am('public','void LogReceive(ISecsMessage msg)'),
+            am('public','void LogEvent(uint ceid, string name)'),
+            am('public','void LogAlarm(uint alid, string text, bool set)'),
+            am('public','void LogStateChange(string machine, string state)'),
+          ].join('\\n')},
+          { label:"SecsGemLogger", type:"class", note:[
+            am('public','void LogSend(ISecsMessage msg)'),
+            am('public','void LogReceive(ISecsMessage msg)'),
+            am('public','void LogEvent(uint ceid, string name)'),
+            am('public','void LogAlarm(uint alid, string text, bool set)'),
+            am('public','void LogStateChange(string machine, string state)'),
+            am('private','void WriteEntry(string direction, ISecsMessage msg)'),
+            am('private','void RotateLogFile()'),
+            am('private','StreamWriter _writer'),
+          ].join('\\n')},
+          { label:"«interface»\\nIConfigRepository", type:"interface", note:[
+            am('public','string GetSetting(string key)'),
+            am('public','void SetSetting(string key, string value)'),
+            am('public','T GetSection<T>(string key)'),
+            am('public','void Save()'),
+            am('public','void Load()'),
+          ].join('\\n')},
+          { label:"ConfigRepository", type:"class", note:[
+            am('public','string GetSetting(string key)'),
+            am('public','void SetSetting(string key, string value)'),
+            am('public','T GetSection<T>(string key)'),
+            am('public','void Save()'),
+            am('public','void Load()'),
+            am('private','void ValidateSchema()'),
+            am('private','Dictionary<string, object> _config'),
+            am('private','string _filePath'),
+          ].join('\\n')},
+          { label:"DI Container\\n(Microsoft.Extensions.DI)", type:"infra",
+            note:"Wires all interfaces to concrete implementations.\\nSingleton lifetimes for all GEM objects.\\nScoped for per-job contexts." },
+          { label:"ErrorHandler / RetryPolicy", type:"infra",
+            note:"Polly-based retry with exponential backoff.\\nCircuit breaker on HSMS send failures.\\nDead-letter queue for undeliverable messages." },
+        ]
+      },
+    ];
+
+    const typeStyle = t => {
+      if(t==="interface") return {bg:"#e8f4fd",border:"#1e40af",label:"#1e3a8a"};
+      if(t==="class")     return {bg:"#f0fdf4",border:"#16a34a",label:"#14532d"};
+      if(t==="factory")   return {bg:"#faf5ff",border:"#7c3aed",label:"#4c1d95"};
+      if(t==="state")     return {bg:"#fff7ed",border:"#ea580c",label:"#7c2d12"};
+      if(t==="model")     return {bg:"#fefce8",border:"#ca8a04",label:"#713f12"};
+      if(t==="infra")     return {bg:"#f8fafc",border:"#64748b",label:"#1e293b"};
+      if(t==="external")  return {bg:"#eef2ff",border:"#4f46e5",label:"#312e81"};
+      if(t==="proto")     return {bg:"#fef2f2",border:"#dc2626",label:"#7f1d1d"};
+      return {bg:"#f8fafc",border:"#94a3b8",label:"#334155"};
+    };
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById("arch-layers");
+      layers.forEach(layer => {
+        const div = document.createElement("div");
+        div.className = "layer avoid-break";
+        div.style.borderColor = layer.border;
+        div.style.background = layer.bg;
+        
+
+        div.innerHTML =
+          '<div class="layer-header">' +
+            '<span class="layer-num" style="color:' + layer.border + '">' +
+              'LAYER ' + layer.num + '&nbsp;' +
+            '</span>' +
+            '<span class="layer-name">' + layer.label + '</span>' +
+            '<div class="layer-desc">' + layer.desc + '</div>' +
+          '</div>' +
+          '<div class="nodes" id="nodes-' + layer.num + '"></div>';
+
+        container.appendChild(div);
+        const nodesDiv = div.querySelector('#nodes-' + layer.num);
+
+        layer.nodes.forEach(node => {
+          const s = typeStyle(node.type);
+          const card = document.createElement("div");
+          card.className = "node-card avoid-break";
+          card.style.borderColor = s.border;
+          card.style.background = s.bg;
+
+          // fix: real HTML tags (no &lt; &gt;), interpolate values, fix style, fix stray }
+          card.innerHTML =
+            '<div class="node-label" style="color:' + s.label + '">' + node.label + '</div>' +
+            '<div class="node-note">' + node.note + '</div>';
+
+          nodesDiv.appendChild(card);
+
+        });
+      });
+    });
+
+  </script>
+</div>
+
+<!-- SECTION 2 -->
+<div class="page-break">
+  <div class="section-title">2. MESSAGE FLOW</div>
+  <h2 class="sub">Bidirectional SECS-II Message Flow</h2>
+  <table class="flow-table avoid-break">
+    <thead><tr><th>Direction</th><th>Message</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="dir-out">Tool → Host</td><td>S1F13 — Establish Comm Req</td><td>Tool initiates on TCP connect</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S1F14 — Establish Comm Ack</td><td>Host confirms — CommunicationStateMachine → COMMUNICATING</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S2F33 — Define Report</td><td>Host defines RPTID + VID list</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S2F35 — Link CE to Report</td><td>Host links CEID → RPTID</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S2F37 — Enable/Disable CE</td><td>Host enables collection events</td></tr>
+      <tr><td class="dir-out">Tool → Host</td><td>S6F11 — Collection Event</td><td>Tool fires CEID with linked report data</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S2F41 — Remote Command</td><td>Host sends RCMD + params to tool</td></tr>
+      <tr><td class="dir-out">Tool → Host</td><td>S2F42 — RC Ack</td><td>Tool acknowledges command</td></tr>
+      <tr><td class="dir-out">Tool → Host</td><td>S5F1 — Alarm Report</td><td>Tool fires alarm with ALID + text</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S5F3 — Enable/Disable Alarm</td><td>Host controls alarm reporting</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S16F11 — PRJobCreate</td><td>Host creates process job (E40)</td></tr>
+      <tr><td class="dir-out">Tool → Host</td><td>S16F12 — PRJobCreate Ack</td><td>Tool acknowledges job create</td></tr>
+      <tr><td class="dir-in">Host → Tool</td><td>S3F17 — CarrierAction</td><td>Host issues carrier command (E87)</td></tr>
+      <tr><td class="dir-out">Tool → Host</td><td>S3F18 — CarrierAction Ack</td><td>Tool acknowledges carrier action</td></tr>
+    </tbody>
+  </table>
+  <h2 class="sub">Report Creation & CE Enable Sequence</h2>
+  <div id="seq-steps"></div>
+  <script>
+  const steps=[["1","Host sends S2F33","DefineReport — RPTID + list of VIDs → ReportManager.DefineReport()"],["2","ReportManager stores","RPTID → VID[] persisted via IVariableRepository + IConfigRepository"],["3","Host sends S2F35","LinkReport — CEID → RPTID → CollectionEventManager.LinkReport()"],["4","CE definition updated","CollectionEventDefinition.LinkedRPTIDs updated for that CEID"],["5","Host sends S2F37","EnableCollectionEvent — specific CEIDs enabled"],["6","CE enabled","CollectionEventDefinition.Enabled = true"],["7","Tool fires event","RecipeEngine.StepChanged → EquipmentEventBus.Publish(EquipmentEvent{CEID})"],["8","CollectionEventManager","Checks IsEnabled(CEID) · Fetches linked RPTIDs · Reads VID values from IVariableRepository"],["9","Sends S6F11","Event Report Send — CEID + RPTID list with variable data → HsmsConnection.SendAsync()"],["10","Host sends S6F12","Ack — confirms receipt · transaction complete"]];
+  const sc=document.getElementById("seq-steps");
+  steps.forEach(([n,t,d])=>{sc.innerHTML+='<div class="seq-step avoid-break"><div class="seq-num">'+n+'</div><div class="seq-title">'+t+'</div><div class="seq-desc">'+d+'</div></div>';});
+  </script>
+</div>
+
+<!-- SECTION 3 -->
+<div class="page-break">
+  <div class="section-title">3. DESIGN PATTERNS & INTERFACE CONTRACTS</div>
+  <h2 class="sub">Applied Design Patterns</h2>
+  <div id="patterns"></div>
+  <script>
+  const patterns=[["State","ICommunicationStateMachine / CommunicationStateMachine — Disabled → NotCommunicating → Communicating\\nIControlStateMachine / ControlStateMachine — EquipmentOffline → Local → Remote\\nIProcessJobManager / ProcessJobManager — Queued → Setting Up → Processing → Complete\\nICarrierManager / CarrierManager — CAS state machine per E87"],["Observer / Event Bus","IConnectionObserver — subscribed by GemKernel to IHsmsConnection events\\nICollectionEventManager — subscribes to IEquipmentEventBus, fires S6F11\\nIEquipmentEventBus — all hardware events publish here, GEM layer subscribes\\nMessageRouter — all incoming SxFy messages route via registered handlers"],["Factory","SecsItemFactory — creates all SECS-II data item types (L, A, U4, I4, F8, B, BOOLEAN) by SecsItemType enum"],["Repository","IVariableRepository / VariableRepository — ECVs, SVs, DVs keyed by VID\\nIConfigRepository / ConfigRepository — all persistent GEM configuration"],["Facade","IGemKernel / GemKernel — single public entry point for machine software; hides all subsystem wiring"],["Adapter","IEquipmentAdapter / TwincatEquipmentAdapter — translates TwinCAT3 ADS API to IEquipmentAdapter contract"],["Command","IRemoteCommandManager / RemoteCommandManager — encapsulates S2F41 RCMD + CPNAME/CPVAL params as executable command objects"],["Mediator","IEquipmentEventBus / EquipmentEventBus — decouples RecipeEngine and TwincatEquipmentAdapter from CollectionEventManager"],["Template Method","Abstract SecsMessageHandler — defines Handle() skeleton; subclasses override ProcessMessage() for each SxFy"],["Strategy","Reconnect/retry strategies injected into HsmsSessionManager\\nEncoding strategies per SECS-II item type in SecsItemFactory"]];
+  const pc=document.getElementById("patterns");
+  patterns.forEach(([n,u])=>{pc.innerHTML+='<div class="pattern-row avoid-break"><div class="pattern-name">'+n+'</div><div class="pattern-used">'+u+'</div></div>';});
+  </script>
+  <h2 class="sub" style="margin-top:24px;">Key Interface Method Signatures</h2>
+  <div id="ifaces"></div>
+  <script>
+  function am2(mod,text){var cls=mod==='public'?'am-pub':mod==='private'?'am-priv':mod==='protected'?'am-prot':'am-int';return'<span class="'+cls+'">'+mod+'</span> '+text;}
+  var ifaces=[
+    ["IGemKernel",[am2('public','void Start()'),am2('public','void Stop()'),am2('public','void ProcessIncomingMessage(ISecsMessage msg)'),am2('public','GemState GetCommunicationState()'),am2('public','GemState GetControlState()'),am2('public','Task SendAsync(ISecsMessage msg)')]],
+    ["IHsmsConnection",[am2('public','Task ConnectAsync(string ip, int port, CancellationToken ct)'),am2('public','Task DisconnectAsync(CancellationToken ct)'),am2('public','bool IsConnected { get; }'),am2('public','Task SendAsync(HsmsMessage msg, CancellationToken ct)'),am2('public','event EventHandler MessageReceived'),am2('public','event EventHandler ConnectionStateChanged')]],
+    ["ICommunicationStateMachine",[am2('public','string CurrentStateName { get; }'),am2('public','void Connect()'),am2('public','void Disconnect()'),am2('public','void OnSelectReq()'),am2('public','void OnSeparateReq()'),am2('public','event EventHandler StateChanged')]],
+    ["IControlStateMachine",[am2('public','string CurrentStateName { get; }'),am2('public','void GoLocal()'),am2('public','void GoRemote()'),am2('public','void GoOffline()'),am2('public','void GoOnline()'),am2('public','event EventHandler StateChanged')]],
+    ["IReportManager",[am2('public','AckCode DefineReport(uint rptId, uint[] vids)'),am2('public','AckCode DeleteReport(uint rptId)'),am2('public','AckCode LinkReport(uint ceid, uint[] rptIds)'),am2('public','AckCode UnlinkReport(uint ceid, uint[] rptIds)'),am2('public','ReportDefinition GetReport(uint rptId)')]],
+    ["ICollectionEventManager",[am2('public','void RegisterCE(CollectionEventDefinition ce)'),am2('public','void FireEvent(uint ceid)'),am2('public','AckCode EnableCE(uint[] ceids)'),am2('public','AckCode DisableCE(uint[] ceids)'),am2('public','List GetLinkedReports(uint ceid)'),am2('public','bool IsEnabled(uint ceid)')]],
+    ["IVariableRepository",[am2('public','SecsItem GetSV(uint vid)'),am2('public','SecsItem GetDV(uint vid)'),am2('public','SecsItem GetECV(uint vid)'),am2('public','void SetECV(uint vid, SecsItem value)'),am2('public','List GetNamelist(VariableType type)')]],
+    ["IProcessJobManager",[am2('public','AckCode CreateJob(PRJobSpec spec)'),am2('public','AckCode StartJob(string jobId)'),am2('public','AckCode PauseJob(string jobId)'),am2('public','AckCode ResumeJob(string jobId)'),am2('public','AckCode AbortJob(string jobId, AbortType type)'),am2('public','PRJobState GetJobState(string jobId)')]],
+    ["IEquipmentAdapter",[am2('public','Task GetStatusAsync()'),am2('public','Task ExecuteCommandAsync(string command, object[] args)'),am2('public','Task ReadVariableAsync(uint vid)'),am2('public','void Subscribe(uint vid, Action onChange)'),am2('public','void Unsubscribe(uint vid)')]],
+    ["IEquipmentEventBus",[am2('public','void Publish(EquipmentEvent evt)'),am2('public','void Subscribe(uint ceid, Action handler)'),am2('public','void Unsubscribe(uint ceid, Action handler)')]],
+  ];
+  var ic=document.getElementById("ifaces");
+  ifaces.forEach(function(item){var name=item[0];var sigs=item[1];ic.innerHTML+='<div class="iface-block avoid-break"><div class="iface-name">'+name+'</div><div class="iface-sigs">'+sigs.join('\\n')+'</div></div>';});
+  </script>
+</div>
+
+<!-- SECTION 4 -->
+<div class="page-break">
+  <div class="section-title">4. SEMI DOCUMENTS — READING ORDER</div>
+  <div id="semi-docs"></div>
+  <script>
+  const semiDocs=[{order:1,doc:"SEMI E5",title:"SECS-II Message Content",layer:"Layer 2",color:"#16a34a",why:"Read first — defines every data item type (L, A, B, U1/2/4/8, I1/2/4/8, F4/F8, BOOLEAN), item header format, block structure, and multi-block rules. You cannot encode or decode a single message without this.",tags:["SecsEncoder","SecsDecoder","ISecsItem","SecsItemFactory","ISecsMessage"]},{order:2,doc:"SEMI E37",title:"HSMS — High Speed Message Services",layer:"Layer 1",color:"#0891b2",why:"Defines TCP/IP framing, 10-byte header structure, SType values (Select/Deselect/Separate/Linktest), T3/T5/T6/T7 timers, Active vs Passive mode, session establishment.",tags:["IHsmsConnection","HsmsConnection","HsmsSessionManager","HsmsMessageFramer"]},{order:3,doc:"SEMI E4",title:"SECS-I — Serial Interface",layer:"Layer 1 (ref)",color:"#dc2626",why:"Skim only. E30 was originally written against E4. You will hit confusing E30 footnotes without knowing this exists. You won't implement it.",tags:["Historical reference only"]},{order:4,doc:"SEMI E30",title:"GEM — Generic Equipment Model",layer:"Layer 3",color:"#7c3aed",why:"Your thickest and most important document. Defines: Communication State Machine, Control State Machine, spooling, SVs/DVs/ECVs, Collection Events, Report definition and linking (S2F33/35/37), Alarms (S5), Remote Commands (S2F41), Process Programs (S7), and all core SxFy behavioral rules.",tags:["IGemKernel","ICommunicationStateMachine","IControlStateMachine","ISpoolingManager","IVariableRepository","IReportManager","ICollectionEventManager","IAlarmManager","IRemoteCommandManager","IProcessProgramManager"]},{order:5,doc:"SEMI E40",title:"Processing Management — Process Jobs",layer:"Layer 4 (GEM300)",color:"#ea580c",why:"Defines Process Job creation, state machine (Queued → Setting Up → Processing → Process Complete → Stopped), abort types, S16Fxx message set, and PRJobSpec structure.",tags:["IProcessJobManager","ProcessJobManager"]},{order:6,doc:"SEMI E87",title:"CMS — Carrier Management System",layer:"Layer 4 (GEM300)",color:"#ea580c",why:"Defines carrier (FOUP/FOSB) loading, unloading, binding, and the Carrier Acquisition State (CAS) machine per load port. S3F17 carrier actions. Essential for 300mm front-end automation.",tags:["ICarrierManager","CarrierManager"]},{order:7,doc:"SEMI E90",title:"Substrate Tracking",layer:"Layer 4 (GEM300)",color:"#ea580c",why:"Defines how individual substrates (wafers) are tracked through Source, Process, and Destination states. S14F1/F3 GetAttr/SetAttr. Required for per-wafer disposition reporting.",tags:["ISubstrateManager","SubstrateManager"]},{order:8,doc:"SEMI E94",title:"CJM — Control Job Management",layer:"Layer 4 (GEM300)",color:"#ea580c",why:"Defines Control Jobs which link Process Jobs to Carriers and orchestrate multi-job flows. S17Fxx message set. The top-level job container the host uses to drive the full process sequence.",tags:["IControlJobManager","ControlJobManager"]},{order:9,doc:"SEMI E116",title:"EPT — Equipment Performance Tracking",layer:"Layer 4 (GEM300)",color:"#ea580c",why:"Defines equipment state tracking for availability metrics: BUSY, IDLE, BLOCKED, ENGINEERING, SCHEDULED_DOWN, UNSCHEDULED_DOWN. Required for OEE reporting in ISO 9000 environments.",tags:["IEptManager","EptManager"]},{order:10,doc:"SEMI E84",title:"EFEM Load Port Interface",layer:"Layer 4 (GEM300 / HW)",color:"#ea580c",why:"Defines parallel handshake signals (CS_0, CS_1, VALID, TR_REQ, BUSY, COMPT) between EFEM/AGV and load port hardware. CarrierManager state transitions must align with E84 hardware signals.",tags:["TwincatEquipmentAdapter (hardware bridge)"]},{order:11,doc:"SEMI E39",title:"OSS — Object Services Standard",layer:"Layer 3/4 (ref)",color:"#7c3aed",why:"Defines the attribute-based object model used by E87, E90, and E94 — the GetAttr (S14F1) / SetAttr (S14F3) pattern. Read before implementing any S14 message handling.",tags:["S14F1/F3 handlers in CarrierManager","SubstrateManager","ControlJobManager"]},{order:12,doc:"SEMI E42",title:"Recipe Management",layer:"Layer 3",color:"#7c3aed",why:"Extends E30 Process Program management with formatted recipes, parameter validation, and recipe versioning. Required if your tool supports structured recipe download/upload beyond raw byte transfer.",tags:["IProcessProgramManager","IRecipeEngine"]},{order:13,doc:"SEMI E148",title:"Time Synchronization",layer:"Layer 3 (ref)",color:"#7c3aed",why:"Defines equipment clock synchronization with the host via S2F17/S2F31. Critical for ISO 9000 traceability — timestamp alignment across tools is an audit requirement.",tags:["GemKernel (S2F17/S2F31 handlers)"]},{order:14,doc:"SEMI E058",title:"OEE — Overall Equipment Effectiveness",layer:"Cross-cutting",color:"#475569",why:"Defines OEE calculation framework that E116 EPT state data feeds into. Governs how EptManager state definitions must be structured to produce valid OEE metrics for ISO 9000 reporting.",tags:["EptManager (state taxonomy alignment)"]}];
+  const sd=document.getElementById("semi-docs");
+  semiDocs.forEach(function(d){var tags=d.tags.map(function(t){return'<span class="semi-tag">'+t+'</span>';}).join("");sd.innerHTML+='<div class="semi-doc avoid-break" style="border-color:'+d.color+'33;border-left-color:'+d.color+';background:#fafbfc;"><div class="semi-doc-header"><span style="background:#0f2035;color:#fff;border-radius:3px;padding:1px 7px;font-size:9px;font-family:monospace;font-weight:700;">'+d.order+'</span><span style="font-size:11px;font-weight:700;font-family:monospace;color:'+d.color+';margin-left:4px;">'+d.doc+'</span><span style="font-size:11px;margin-left:4px;">'+d.title+'</span><span style="font-size:9px;font-style:italic;color:#94a3b8;margin-left:auto;">'+d.layer+'</span></div><div class="semi-why">'+d.why+'</div><div class="semi-tags">'+tags+'</div></div>';});
+  </script>
+</div>
+
+<!-- SECTION 5 -->
+<div class="page-break">
+  <div class="section-title">5. APPENDIX — COMPLETE SECS-II MESSAGE CATALOG</div>
+  <div id="appendix"></div>
+  <script>
+  const streams=[{s:1,msgs:["S1F1/2 – Are You There / On Line Data","S1F3/4 – Selected Equipment Status Request/Data","S1F5/6 – Formatted Status Request/Data","S1F7/8 – Fixed Form Request/Data","S1F11/12 – Status Variable Namelist Request/Data","S1F13/14 – Establish Communications Request/Ack","S1F15/16 – Request Offline/Ack","S1F17/18 – Request Online/Ack"]},{s:2,msgs:["S2F13/14 – Equipment Constant Request/Data","S2F15/16 – New Equipment Constant Send/Ack","S2F17/18 – Date and Time Request/Data","S2F21/22 – Remote Command Send/Ack (legacy)","S2F29/30 – Equipment Constant Namelist Request/Data","S2F31/32 – Date and Time Set/Ack","S2F33/34 – Define Report/Ack","S2F35/36 – Link Collection Event Report/Ack","S2F37/38 – Enable/Disable Collection Event/Ack","S2F41/42 – Host Command Send/Ack","S2F43/44 – Reset Spooling/Ack","S2F45/46 – Define Variable Limit Attributes/Ack","S2F47/48 – Variable Limit Attribute Request/Data"]},{s:3,msgs:["S3F17/18 – Carrier Action Request/Ack (E87)","S3F23/24 – Cancel Carrier Action/Ack (E87)","S3F25/26 – Carrier Tag Read/Data (E87)"]},{s:5,msgs:["S5F1/2 – Alarm Report Send/Ack","S5F3/4 – Enable/Disable Alarm/Ack","S5F5/6 – List Alarms Request/Data","S5F7/8 – List Enabled Alarms Request/Data"]},{s:6,msgs:["S6F1/2 – Trace Data Send/Ack","S6F5/6 – Multi-block Data Send/Ack","S6F11/12 – Event Report Send/Ack","S6F15/16 – Event Report Request/Data","S6F17/18 – Annotated Event Report Request/Data","S6F19/20 – Individual Report Request/Data","S6F21/22 – Annotated Individual Report Request/Data","S6F23/24 – Request Spooled Data/Ack"]},{s:7,msgs:["S7F1/2 – Process Program Load Inquire/Grant","S7F3/4 – Process Program Send/Ack","S7F5/6 – Process Program Request/Data","S7F17/18 – Delete Process Program/Ack","S7F19/20 – Process Program List Request/Data","S7F23/24 – Formatted PP Send/Ack","S7F25/26 – Formatted PP Request/Data"]},{s:9,msgs:["S9F1 – Unrecognized Device ID","S9F3 – Unrecognized Stream","S9F5 – Unrecognized Function","S9F7 – Illegal Data","S9F9 – Transaction Timer Timeout (T3)","S9F11 – Data Too Long","S9F13 – Conversation Timeout (T5)"]},{s:10,msgs:["S10F1/2 – Terminal Request/Ack","S10F3/4 – Terminal Display Single/Ack","S10F5/6 – Terminal Display Multi-Block/Ack"]},{s:12,msgs:["S12F1/2 – Map Setup Send/Ack","S12F3/4 – Map Setup Acknowledge/Data","S12F5/6 – Map Transmit Inquire/Grant","S12F7/8 – Map Send/Ack","S12F9/10 – Map Request/Data","S12F11/12 – Map Data Type 1/Ack","S12F13/14 – Map Data Type 2/Ack","S12F15/16 – Map Data Type 3/Ack","S12F17/18 – Map Data Acknowledge/Data","S12F19/20 – Map Error Report/Ack"]},{s:13,msgs:["S13F11/12 – Create Process Job/Ack (E40 alt stream)","S13F13/14 – Abort Process Job/Ack"]},{s:14,msgs:["S14F1/2 – GetAttr Request/Data (E87/E90/E94 attribute queries)","S14F3/4 – SetAttr Request/Ack (E87/E90/E94 attribute updates)"]},{s:16,msgs:["S16F1/2 – Process Job Inquire/Grant","S16F11/12 – PRJobCreate/Ack (E40)","S16F13/14 – PRJobMultiCreate/Ack","S16F15/16 – PRJobDequeue/Ack","S16F17/18 – PRJobCancel/Ack","S16F19/20 – PRJobPause/Ack","S16F21/22 – PRJobResume/Ack","S16F23/24 – PRJobStop/Ack","S16F25/26 – PRJobAbort/Ack","S16F27/28 – PRSetMtrlOrder/Ack"]},{s:17,msgs:["S17F1/2 – CreateControlJob/Ack (E94)","S17F3/4 – DeleteControlJob/Ack (E94)","S17F5/6 – StartControlJob/Ack (E94)","S17F7/8 – StopControlJob/Ack (E94)","S17F9/10 – AbortControlJob/Ack (E94)","S17F11/12 – PauseControlJob/Ack (E94)","S17F13/14 – ResumeControlJob/Ack (E94)"]}];
+  const ac=document.getElementById("appendix");
+  streams.forEach(function(item){var s=item.s;var msgs=item.msgs;var msgsHtml=msgs.map(function(m,i){return'<div class="stream-msg" style="'+(i%2===1?'background:#f8fafc':'')+'">'+ m +'</div>';}).join("");ac.innerHTML+='<div class="stream-block avoid-break"><div class="stream-header">Stream '+s+' \u2014 '+msgs.length+' messages</div><div class="stream-msgs">'+msgsHtml+'</div></div>';});
+  </script>
+</div>
+
+</body>
+</html>`}
+          style={{
+            width: "100%",
+            height: "calc(100vh - 160px)",
+            border: "none",
+            background: "#fff",
+          }}
+          title="Printable Version"
+        />
       )}
     </div>
   );
