@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk 'NR>=3130 && NR<=3160' /run/media/jakstrick/BFP2/Projects/Projects-2025/web-projects/secs-gem-interpreter/src/components/SECS2Interpreter.jsx)",
+      "Bash(awk 'NR>=3160 && NR<=3185' /run/media/jakstrick/BFP2/Projects/Projects-2025/web-projects/secs-gem-interpreter/src/components/SECS2Interpreter.jsx)"
+    ]
+  }
+}

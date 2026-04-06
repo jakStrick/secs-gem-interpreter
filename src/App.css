@@ -40,3 +40,17 @@
 .read-the-docs {
   color: #888;
 }
+
+CSS.arch-node {
+  will-change: background;
+}
+
+.arch-node:hover .arch-glow {
+  box-shadow:
+    0 0 16px #38bdf8aa,
+    0 0 8px #38bdf855 !important;
+}
+
+.arch-node:hover .arch-note {
+  display: block !important;
+}
