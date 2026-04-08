@@ -2757,7 +2757,7 @@ const FullArchitectureTab = () => {
 
       {/* PATTERNS TAB */}
       {tab === "patterns" && (
-        <div style={{ padding: "24px" }}>
+        <div style={{ padding: "24px", textAlign: "left" }}>
           <div style={{ fontSize: 12, color: "#475569", marginBottom: 18 }}>
             All design patterns applied, with concrete class mappings.
           </div>
