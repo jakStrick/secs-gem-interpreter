@@ -3453,4 +3453,4 @@ const FullArchitectureTab = () => {
   );
 };
 
-export default FullArchitectureTab;
+export default SECS2InterpreterApp;
