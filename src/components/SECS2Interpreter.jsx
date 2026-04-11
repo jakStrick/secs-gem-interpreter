@@ -1526,7 +1526,7 @@ const archLayers = [
         id: "HsmsConnection",
         label: "HsmsConnection",
         type: "class",
-        note: "public async Task ConnectAsync(string ip, int port, CancellationToken ct)\npublic async Task DisconnectAsync(CancellationToken ct)\npublic bool IsConnected { get; }\npublic async Task SendAsync(HsmsMessage msg, CancellationToken ct)\nprivate async Task ReceiveLoopAsync(CancellationToken ct)\nprivate readonly TcpClient _client\nprivate NetworkStream _stream",
+        note: "public async Task ConnectAsync(string ip, int port, CancellationToken ct)\npublic async Task DisconnectAsync(CancellationToken ct)\npublic bool IsConnected { get; }\npublic async Task SendAsync(HsmsMessage msg, CancellationToken ct)\npublic event EventHandler<HsmsMessage> MessageReceived\npublic event EventHandler<ConnectionStateChangedArgs> ConnectionStateChanged\nprivate async Task ReceiveLoopAsync(CancellationToken ct)\nprivate readonly TcpClient _client\nprivate NetworkStream _stream",
       },
       {
         id: "HsmsSessionMgr",
@@ -1564,7 +1564,7 @@ const archLayers = [
         id: "SecsMessage",
         label: "SecsMessage",
         type: "class",
-        note: "Implements ISecsMessage · S/F fields · Block structure\npublic static SecsMessage Create(byte stream, byte func, ISecsItem root)\nprivate void ValidateStreamFunction()",
+        note: "public byte Stream { get; }\npublic byte Function { get; }\npublic bool ReplyBit { get; }\npublic uint SystemBytes { get; }\npublic ISecsItem Root { get; }\npublic byte[] Encode()\npublic static SecsMessage Create(byte stream, byte func, ISecsItem root)\nprivate void ValidateStreamFunction()",
       },
       {
         id: "ISecsItem",
@@ -1627,7 +1627,7 @@ const archLayers = [
         id: "CommSM",
         label: "CommunicationStateMachine",
         type: "state",
-        note: "State Pattern · E30 §8.3\nDisabled → NotCommunicating → Communicating\ninternal void TransitionTo(CommunicationState state)\nprivate CommunicationState _currentState",
+        note: "public string CurrentStateName { get; }\npublic void Connect()\npublic void Disconnect()\npublic void OnSelectReq()\npublic void OnSeparateReq()\npublic event EventHandler<string> StateChanged\ninternal void TransitionTo(CommunicationState state)\nprivate CommunicationState _currentState",
       },
       {
         id: "ICtrlSM",
@@ -1639,7 +1639,7 @@ const archLayers = [
         id: "CtrlSM",
         label: "ControlStateMachine",
         type: "state",
-        note: "State Pattern · E30 §8.4\nEquipmentOffline → AttemptOnline → Local/Remote\ninternal void TransitionTo(ControlState state)\nprivate ControlState _currentState",
+        note: "public string CurrentStateName { get; }\npublic void GoLocal()\npublic void GoRemote()\npublic void GoOffline()\npublic void GoOnline()\npublic event EventHandler<string> StateChanged\ninternal void TransitionTo(ControlState state)\nprivate ControlState _currentState",
       },
       {
         id: "ISpoolingManager",
@@ -1651,7 +1651,7 @@ const archLayers = [
         id: "SpoolingManager",
         label: "SpoolingManager",
         type: "class",
-        note: "Implements ISpoolingManager · E30 §9\nprivate readonly Queue<ISecsMessage> _spoolQueue\nprivate readonly object _lock",
+        note: "public void Spool(ISecsMessage msg)\npublic IEnumerable<ISecsMessage> Unspool()\npublic void Purge()\npublic int SpoolCount { get; }\npublic bool IsSpoolingActive { get; }\nprivate readonly Queue<ISecsMessage> _spoolQueue\nprivate readonly object _lock",
       },
     ],
   },
@@ -1742,7 +1742,7 @@ const archLayers = [
         id: "VariableRepo",
         label: "VariableRepository",
         type: "class",
-        note: "Repository Pattern · Stores ECVs/SVs/DVs keyed by VID\nprivate void LoadFromConfig()\nprivate readonly Dictionary<uint, SecsItem> _svs\nprivate readonly Dictionary<uint, SecsItem> _dvs\nprivate Dictionary<uint, SecsItem> _ecvs",
+        note: "public SecsItem GetSV(uint vid)\npublic SecsItem GetDV(uint vid)\npublic SecsItem GetECV(uint vid)\npublic void SetECV(uint vid, SecsItem value)\npublic List<VariableDefinition> GetNamelist(VariableType type)\nprivate void LoadFromConfig()\nprivate readonly Dictionary<uint, SecsItem> _svs\nprivate readonly Dictionary<uint, SecsItem> _dvs\nprivate Dictionary<uint, SecsItem> _ecvs",
       },
       {
         id: "IReportMgr",
@@ -1754,7 +1754,7 @@ const archLayers = [
         id: "ReportMgr",
         label: "ReportManager",
         type: "class",
-        note: "S2F33 Define · S2F35 Link CEID→RPTID · S2F37 Enable/Disable CE\nprivate void PersistReports()\nprivate readonly Dictionary<uint, ReportDefinition> _reports",
+        note: "public AckCode DefineReport(uint rptId, uint[] vids)\npublic AckCode DeleteReport(uint rptId)\npublic AckCode LinkReport(uint ceid, uint[] rptIds)\npublic AckCode UnlinkReport(uint ceid, uint[] rptIds)\npublic ReportDefinition GetReport(uint rptId)\nprivate void PersistReports()\nprivate readonly Dictionary<uint, ReportDefinition> _reports",
       },
       {
         id: "ICEMgr",
@@ -1766,7 +1766,7 @@ const archLayers = [
         id: "CEMgr",
         label: "CollectionEventManager",
         type: "class",
-        note: "Observer Pattern · Fires S6F11 on event trigger\nprivate ISecsMessage BuildS6F11(uint ceid)\nprivate readonly Dictionary<uint, CollectionEventDefinition> _events",
+        note: "public void RegisterCE(CollectionEventDefinition ce)\npublic void FireEvent(uint ceid)\npublic AckCode EnableCE(uint[] ceids)\npublic AckCode DisableCE(uint[] ceids)\npublic List<ReportDefinition> GetLinkedReports(uint ceid)\npublic bool IsEnabled(uint ceid)\nprivate ISecsMessage BuildS6F11(uint ceid)\nprivate readonly Dictionary<uint, CollectionEventDefinition> _events",
       },
       {
         id: "ReportDef",
@@ -1798,7 +1798,7 @@ const archLayers = [
         id: "AlarmMgr",
         label: "AlarmManager",
         type: "class",
-        note: "ALID registry · S5F1 on alarm set · S5F3 enable/disable\nprivate async Task SendS5F1(uint alid, bool set, string text)\nprivate readonly Dictionary<uint, AlarmRecord> _alarms",
+        note: "public void SetAlarm(uint alid, string text)\npublic void ClearAlarm(uint alid)\npublic AckCode EnableAlarm(uint alid)\npublic AckCode DisableAlarm(uint alid)\npublic IEnumerable<AlarmRecord> GetAlarms()\npublic bool IsEnabled(uint alid)\nprivate async Task SendS5F1(uint alid, bool set, string text)\nprivate readonly Dictionary<uint, AlarmRecord> _alarms",
       },
       {
         id: "IRCMgr",
@@ -1810,7 +1810,7 @@ const archLayers = [
         id: "RCMgr",
         label: "RemoteCommandManager",
         type: "class",
-        note: "Command Pattern · S2F41 dispatch · CPNAME/CPVAL\nprivate void OnS2F41(ISecsMessage msg)\nprivate async Task SendS2F42(AckCode code)\nprivate readonly Dictionary<string, Func<CpList,AckCode>> _commands",
+        note: "public void RegisterCommand(string rcmd, Func<CpList, AckCode> handler)\npublic AckCode ExecuteCommand(string rcmd, CpList parameters)\npublic IEnumerable<string> GetRegisteredCommands()\nprivate void OnS2F41(ISecsMessage msg)\nprivate async Task SendS2F42(AckCode code)\nprivate readonly Dictionary<string, Func<CpList,AckCode>> _commands",
       },
       {
         id: "IPPMgr",
@@ -1822,7 +1822,7 @@ const archLayers = [
         id: "PPMgr",
         label: "ProcessProgramManager",
         type: "class",
-        note: "S7F1/3/5 PP transfer · S7F17 delete · S7F19 list\npublic virtual bool ValidatePP(byte[] body)\nprivate void OnS7F3(ISecsMessage msg)\nprivate async Task HandleMultiBlockTransfer(ISecsMessage msg)\nprivate readonly Dictionary<string, byte[]> _programs",
+        note: "public AckCode UploadPP(string ppid, byte[] body)\npublic AckCode DownloadPP(string ppid, out byte[] body)\npublic AckCode DeletePP(string ppid)\npublic virtual bool ValidatePP(byte[] body)\npublic IEnumerable<string> ListPPs()\nprivate void OnS7F3(ISecsMessage msg)\nprivate async Task HandleMultiBlockTransfer(ISecsMessage msg)\nprivate readonly Dictionary<string, byte[]> _programs",
       },
     ],
   },
@@ -1855,7 +1855,7 @@ const archLayers = [
         id: "RecipeEngine",
         label: "RecipeEngine",
         type: "class",
-        note: "Executes process recipe steps · Fires StepChanged → EquipmentEventBus\nprivate void AdvanceStep()\nprivate void OnStepComplete(int step)\nprivate RecipeDefinition _activeRecipe\nprivate int _currentStep",
+        note: "public AckCode LoadRecipe(string recipeId)\npublic void StartRecipe()\npublic void AbortRecipe()\npublic int GetCurrentStep()\npublic RecipeState GetState()\npublic event EventHandler<int> StepChanged\nprivate void AdvanceStep()\nprivate void OnStepComplete(int step)\nprivate RecipeDefinition _activeRecipe\nprivate int _currentStep",
       },
       {
         id: "IEventBus",
@@ -1867,7 +1867,7 @@ const archLayers = [
         id: "EventBus",
         label: "EquipmentEventBus",
         type: "class",
-        note: "Mediator Pattern · Thread-safe dispatch via Channel<T>\nprivate async Task DispatchToSubscribers(EquipmentEvent evt)\nprivate readonly Channel<EquipmentEvent> _channel\nprivate readonly Dictionary<uint, List<Action<EquipmentEvent>>> _subscribers",
+        note: "public void Publish(EquipmentEvent evt)\npublic void Subscribe(uint ceid, Action<EquipmentEvent> handler)\npublic void Unsubscribe(uint ceid, Action<EquipmentEvent> handler)\nprivate async Task DispatchToSubscribers(EquipmentEvent evt)\nprivate readonly Channel<EquipmentEvent> _channel\nprivate readonly Dictionary<uint, List<Action<EquipmentEvent>>> _subscribers",
       },
     ],
   },
@@ -1888,7 +1888,7 @@ const archLayers = [
         id: "SecsGemLogger",
         label: "SecsGemLogger",
         type: "class",
-        note: "Structured logging · Rotating file + real-time stream\nprivate void WriteEntry(string direction, ISecsMessage msg)\nprivate void RotateLogFile()\nprivate readonly StreamWriter _writer",
+        note: "public void LogSend(ISecsMessage msg)\npublic void LogReceive(ISecsMessage msg)\npublic void LogEvent(uint ceid, string name)\npublic void LogAlarm(uint alid, string text, bool set)\npublic void LogStateChange(string machine, string state)\nprivate void WriteEntry(string direction, ISecsMessage msg)\nprivate void RotateLogFile()\nprivate readonly StreamWriter _writer",
       },
       {
         id: "IConfigRepo",
@@ -1900,7 +1900,7 @@ const archLayers = [
         id: "ConfigRepo",
         label: "ConfigRepository",
         type: "class",
-        note: "JSON/DB-backed · Stores HSMS params, VID/CEID/RPTID maps\nprivate void ValidateSchema()\nprivate readonly Dictionary<string, object> _config\nprivate readonly string _filePath",
+        note: "public string GetSetting(string key)\npublic void SetSetting(string key, string value)\npublic T GetSection<T>(string key)\npublic void Save()\npublic void Load()\nprivate void ValidateSchema()\nprivate readonly Dictionary<string, object> _config\nprivate readonly string _filePath",
       },
       {
         id: "DiContainer",
@@ -2757,7 +2757,7 @@ const FullArchitectureTab = () => {
 
       {/* PATTERNS TAB */}
       {tab === "patterns" && (
-        <div style={{ padding: "24px", textAlign: "left" }}>
+        <div style={{ padding: "24px" }}>
           <div style={{ fontSize: 12, color: "#475569", marginBottom: 18 }}>
             All design patterns applied, with concrete class mappings.
           </div>
@@ -3073,7 +3073,8 @@ const FullArchitectureTab = () => {
     var rest = tokens.slice(1).join(' ');
     var cls = access === 'public' ? 'am-pub' : access === 'private' ? 'am-priv' : access === 'protected' ? 'am-prot' : 'am-int';
     var restHtml = rest ? ' <span style="color:#94a3b8">' + rest + '</span>' : '';
-    return '<span class="' + cls + '">' + access + '</span>' + restHtml + ' ' + text;
+    var safeText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return '<span class="' + cls + '">' + access + '</span>' + restHtml + ' ' + safeText;
   }
   var layers = [
     { num:'PLC', label:'PLC / HARDWARE LAYER (TwinCAT · EtherCAT · IEC 61131-3)', border:'#f87171', bg:'#fff5f5',
@@ -3107,7 +3108,7 @@ const FullArchitectureTab = () => {
       desc:'SEMI E37 HSMS — Connection Management, Session, Framing',
       nodes:[
         { label:'«interface»\\nIHsmsConnection', type:'interface', note:[am('public','Task ConnectAsync(string ip, int port, CancellationToken ct)'),am('public','Task DisconnectAsync(CancellationToken ct)'),am('public','bool IsConnected { get; }'),am('public','Task SendAsync(HsmsMessage msg, CancellationToken ct)'),am('public','event EventHandler<HsmsMessage> MessageReceived'),am('public','event EventHandler<ConnectionStateChangedArgs> ConnectionStateChanged')].join('\\n')},
-        { label:'HsmsConnection', type:'class', note:[am('public async','Task ConnectAsync(string ip, int port, CancellationToken ct)'),am('public async','Task DisconnectAsync(CancellationToken ct)'),am('public','bool IsConnected { get; }'),am('public async','Task SendAsync(HsmsMessage msg, CancellationToken ct)'),am('private async','Task ReceiveLoopAsync(CancellationToken ct)'),am('private readonly','TcpClient _client'),am('private','NetworkStream _stream')].join('\\n')},
+        { label:'HsmsConnection', type:'class', note:[am('public async','Task ConnectAsync(string ip, int port, CancellationToken ct)'),am('public async','Task DisconnectAsync(CancellationToken ct)'),am('public','bool IsConnected { get; }'),am('public async','Task SendAsync(HsmsMessage msg, CancellationToken ct)'),am('public','event EventHandler<HsmsMessage> MessageReceived'),am('public','event EventHandler<ConnectionStateChangedArgs> ConnectionStateChanged'),am('private async','Task ReceiveLoopAsync(CancellationToken ct)'),am('private readonly','TcpClient _client'),am('private','NetworkStream _stream')].join('\\n')},
         { label:'HsmsSessionManager', type:'class', note:[am('public async','Task SelectAsync()'),am('public async','Task DeSelectAsync()'),am('public async','Task SeparateAsync()'),am('public async','Task SendLinktestAsync()'),am('private','void StartHeartbeat()'),am('private async','Task ReconnectAsync()'),am('private readonly','IHsmsConnection _connection')].join('\\n')},
         { label:'HsmsMessageFramer', type:'class', note:[am('public','byte[] Encode(HsmsMessage msg)'),am('public','HsmsMessage Decode(byte[] data)'),am('public static','uint GenerateSystemBytes()'),am('private static','byte[] BuildHeader(HsmsMessage msg)'),am('private static','void ValidateLength(byte[] data)')].join('\\n')},
         { label:'«interface»\\nIConnectionObserver', type:'interface', note:[am('public','void OnConnected()'),am('public','void OnDisconnected()'),am('public','void OnMessageReceived(HsmsMessage msg)')].join('\\n')},
